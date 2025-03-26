@@ -1,0 +1,47 @@
+{
+	"name": "eda-copilot",
+	"version": "1.1.0",
+	"description": "EDA Copilot",
+	"author": "Mr_Fang <klxf@vip.qq.com>",
+	"license": "GNU GPLv3",
+	"homepage": "https://github.com/klxf/eda-copilot",
+	"scripts": {
+		"compile": "rimraf ./dist/ && ts-node ./config/esbuild.prod.ts",
+		"prepare": "husky",
+		"prettier:all": "prettier --write .",
+		"eslint:all": "eslint --ext .ts --fix .",
+		"fix": "npm run prettier:all && npm run eslint:all",
+		"build": "npm run compile && ts-node ./build/packaged.ts"
+	},
+	"devDependencies": {
+		"@jlceda/pro-api-types": "^0.1.132",
+		"@microsoft/tsdoc": "^0.15.0",
+		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
+		"@types/fs-extra": "^11.0.4",
+		"@typescript-eslint/eslint-plugin": "^7.18.0",
+		"@typescript-eslint/parser": "^7.18.0",
+		"esbuild": "0.25.0",
+		"eslint": "^8.57.0",
+		"eslint-config-alloy": "^5.1.2",
+		"eslint-plugin-tsdoc": "^0.3.0",
+		"fs-extra": "^11.2.0",
+		"husky": "^9.1.6",
+		"ignore": "^6.0.2",
+		"jszip": "^3.10.1",
+		"lint-staged": "^15.2.10",
+		"prettier": "^3.3.3",
+		"rimraf": "^6.0.1",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.6.2"
+	},
+	"lint-staged": {
+		"*.ts": "eslint --cache --fix",
+		"*.{js,ts,html,css,json,md}": "prettier --write"
+	},
+	"engines": {
+		"node": ">=20.5.0"
+	},
+	"dependencies": {
+		"@google/generative-ai": "^0.21.0"
+	}
+}
