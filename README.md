@@ -18,7 +18,8 @@
 
 3. 在正式使用前需要先配置模型，点击 `模型` 选择模型，点击 `设置` 进行 API 配置
 
-![image](https://github.com/user-attachments/assets/2bece26e-167d-4cd5-97d1-3c03a171b99f)
+
+![image](https://github.com/user-attachments/assets/82c2d88b-683a-4bad-ab85-616c8114aa57)
 
 
 ## 开源许可
