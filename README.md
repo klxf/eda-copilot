@@ -18,6 +18,9 @@
 
 3. 在正式使用前需要先配置模型，点击 `模型` 选择模型，点击 `设置` 进行 API 配置
 
+![image](https://github.com/user-attachments/assets/2bece26e-167d-4cd5-97d1-3c03a171b99f)
+
+
 ## 开源许可
 
 <a href="https://choosealicense.com/licenses/apache-2.0/" style="vertical-align: inherit;" target="_blank"><img src="https://img.shields.io/github/license/easyeda/pro-api-sdk" alt="GitHub License" class="not-medium-zoom-image" style="display: inline; vertical-align: inherit;" /></a>
