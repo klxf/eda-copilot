@@ -1,0 +1,30 @@
+name: Auto Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        
+      - name: 初始化环境
+        run: |
+          npm install
+      
+      - name: 构建
+        run: |
+          npm run build
+        
+      - name: 上传工件
+        uses: actions/upload-artifact@v4
+        with:
+          name: eda-copilot
+          path: |
+            ./build/dist/eda-copilot_*.eext
