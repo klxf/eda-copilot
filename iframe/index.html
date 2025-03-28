@@ -1,301 +1,328 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>EDA Copilot</title>
-	<script src="/iframe/js/AI.js"></script>
-	<script src="/iframe/js/marked.umd.js"></script>
-	<link rel="stylesheet" href="/iframe/css/style.css">
-</head>
-<body>
-<!-- 设置浮框 -->
-<div class="settings-container" id="settingsModal">
-	<div class="settings-title">设置</div>
-	<div class="settings-item" id="google-settings">
-		<label class="settings-label" for="custom-google-host">接口地址:</label>
-		<input type="text" class="settings-input" id="custom-google-host">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>EDA Copilot</title>
+		<script src="/iframe/js/AI.js"></script>
+		<script src="/iframe/js/marked.umd.js"></script>
+		<link rel="stylesheet" href="/iframe/css/style.css" />
+	</head>
+	<body>
+		<!-- 设置浮框 -->
+		<div class="settings-container" id="settingsModal">
+			<div class="settings-title">设置</div>
+			<div class="settings-item" id="google-settings">
+				<label class="settings-label" for="custom-google-host">接口地址:</label>
+				<input type="text" class="settings-input" id="custom-google-host" />
 
-		<label class="settings-label" for="google-api-key">API KEY:</label>
-		<input type="text" class="settings-input" id="google-api-key">
+				<label class="settings-label" for="google-api-key">API KEY:</label>
+				<input type="text" class="settings-input" id="google-api-key" />
 
-		<label class="settings-label" for="custom-google-header">自定义请求头:</label>
-		<input type="text" class="settings-input" id="custom-google-header">
-	</div>
-	<div class="settings-item" id="ds-settings" style="display: none">
-		<label class="settings-label" for="custom-ds-host">接口地址:</label>
-		<input type="text" class="settings-input" id="custom-ds-host">
+				<label class="settings-label" for="custom-google-header">自定义请求头:</label>
+				<input type="text" class="settings-input" id="custom-google-header" />
+			</div>
+			<div class="settings-item" id="ds-settings" style="display: none">
+				<label class="settings-label" for="custom-ds-host">接口地址:</label>
+				<input type="text" class="settings-input" id="custom-ds-host" />
 
-		<label class="settings-label" for="ds-api-key">API KEY:</label>
-		<input type="text" class="settings-input" id="ds-api-key">
+				<label class="settings-label" for="ds-api-key">API KEY:</label>
+				<input type="text" class="settings-input" id="ds-api-key" />
 
-		<label class="settings-label" for="custom-ds-header">自定义请求头:</label>
-		<input type="text" class="settings-input" id="custom-ds-header">
-	</div>
-	<div class="settings-item" id="qwen-settings" style="display: none">
-		<label class="settings-label" for="custom-qwen-host">接口地址:</label>
-		<input type="text" class="settings-input" id="custom-qwen-host">
+				<label class="settings-label" for="custom-ds-header">自定义请求头:</label>
+				<input type="text" class="settings-input" id="custom-ds-header" />
+			</div>
+			<div class="settings-item" id="qwen-settings" style="display: none">
+				<label class="settings-label" for="custom-qwen-host">接口地址:</label>
+				<input type="text" class="settings-input" id="custom-qwen-host" />
 
-		<label class="settings-label" for="qwen-api-key">API KEY:</label>
-		<input type="text" class="settings-input" id="qwen-api-key">
+				<label class="settings-label" for="qwen-api-key">API KEY:</label>
+				<input type="text" class="settings-input" id="qwen-api-key" />
 
-		<label class="settings-label" for="custom-qwen-header">自定义请求头:</label>
-		<input type="text" class="settings-input" id="custom-qwen-header">
-	</div>
-	<div class="settings-item" id="custom-settings" style="display: none">
-		<label class="settings-label" for="custom-host">接口地址:</label>
-		<input type="text" class="settings-input" id="custom-host">
+				<label class="settings-label" for="custom-qwen-header">自定义请求头:</label>
+				<input type="text" class="settings-input" id="custom-qwen-header" />
+			</div>
+			<div class="settings-item" id="custom-settings" style="display: none">
+				<label class="settings-label" for="custom-host">接口地址:</label>
+				<input type="text" class="settings-input" id="custom-host" />
 
-		<label class="settings-label" for="custom-endpoint">终结点:</label>
-		<input type="text" class="settings-input" id="custom-endpoint">
+				<label class="settings-label" for="custom-endpoint">终结点:</label>
+				<input type="text" class="settings-input" id="custom-endpoint" />
 
-		<label class="settings-label" for="custom-model">模型:</label>
-		<input type="text" class="settings-input" id="custom-model">
+				<label class="settings-label" for="custom-model">模型:</label>
+				<input type="text" class="settings-input" id="custom-model" />
 
-		<label class="settings-label" for="custom-header">自定义请求头:</label>
-		<input type="text" class="settings-input" id="custom-header">
-	</div>
-	<div class="settings-buttons">
-		<button class="settings-button cancel" onclick="closeSettings()">取消</button>
-		<button class="settings-button save" onclick="saveSettings()">保存</button>
-	</div>
-</div>
-<!-- 模型浮框 -->
-<div class="settings-container" id="modelsModal">
-	<div class="settings-title">模型</div>
-	<div class="settings-item">
-		<label class="settings-label" for="model-name">选择模型</label>
-		<select class="settings-input" id="model-name">
-			<optgroup label="Custom">
-				<option value="custom">自定义</option>
-			</optgroup>
-			<optgroup label="Gemini">
-				<option value="gemini-2.0-flash-001">gemini-2.0-flash</option>
-				<option value="gemini-1.5-flash-002" selected>gemini-1.5-flash</option>
-				<option value="gemini-1.5-pro-002">gemini-1.5-pro</option>
-			</optgroup>
-			<optgroup label="DeepSeek">
-				<option value="deepseek-reasoner">deepseek-r1</option>
-				<option value="deepseek-chat">deepseek-v3</option>
-			</optgroup>
-			<optgroup label="QWen">
-				<option value="qwen-vl-max-latest">qwen-vl-max</option>
-				<option value="qwen-max-latest">qwen-max</option>
-				<option value="qwen-plus-latest">qwen-plus</option>
-			</optgroup>
-		</select>
-	</div>
-	<div class="settings-buttons">
-		<button class="settings-button cancel" onclick="closeModels()">取消</button>
-		<button class="settings-button save" onclick="saveModels()">保存</button>
-	</div>
-</div>
-<!-- 主体 -->
-<div class="chat-container">
-	<!-- header -->
-	<div class="chat-header">
-		<div class="chat-title" id="title">新的聊天</div>
-		<div class="chat-subtitle" id="subtitle">测试</div>
-	</div>
-	<!-- body -->
-	<div class="chat-body">
-		<div class="message-bubble">
-			<div>有什么可以帮你的吗？</div>
-			<div class="message-meta">预设提示词</div>
+				<label class="settings-label" for="custom-header">自定义请求头:</label>
+				<input type="text" class="settings-input" id="custom-header" />
+			</div>
+			<div class="settings-buttons">
+				<button class="settings-button cancel" onclick="closeSettings()">取消</button>
+				<button class="settings-button save" onclick="saveSettings()">保存</button>
+			</div>
+		</div>
+		<!-- 模型浮框 -->
+		<div class="settings-container" id="modelsModal">
+			<div class="settings-title">模型</div>
+			<div class="settings-item">
+				<label class="settings-label" for="model-name">选择模型</label>
+				<select class="settings-input" id="model-name">
+					<optgroup label="Custom">
+						<option value="custom">自定义</option>
+					</optgroup>
+					<optgroup label="Gemini">
+						<option value="gemini-2.0-flash-001">gemini-2.0-flash</option>
+						<option value="gemini-1.5-flash-002" selected>gemini-1.5-flash</option>
+						<option value="gemini-1.5-pro-002">gemini-1.5-pro</option>
+					</optgroup>
+					<optgroup label="DeepSeek">
+						<option value="deepseek-reasoner">deepseek-r1</option>
+						<option value="deepseek-chat">deepseek-v3</option>
+					</optgroup>
+					<optgroup label="QWen">
+						<option value="qwen-vl-max-latest">qwen-vl-max</option>
+						<option value="qwen-max-latest">qwen-max</option>
+						<option value="qwen-plus-latest">qwen-plus</option>
+					</optgroup>
+				</select>
+			</div>
+			<div class="settings-buttons">
+				<button class="settings-button cancel" onclick="closeModels()">取消</button>
+				<button class="settings-button save" onclick="saveModels()">保存</button>
+			</div>
+		</div>
+		<!-- 主体 -->
+		<div class="chat-container">
+			<!-- header -->
+			<div class="chat-header">
+				<div class="chat-title" id="title">新的聊天</div>
+				<div class="chat-subtitle" id="subtitle">测试</div>
+			</div>
+			<!-- body -->
+			<div class="chat-body">
+				<div class="message-bubble">
+					<div>有什么可以帮你的吗？</div>
+					<div class="message-meta">预设提示词</div>
+				</div>
+			</div>
+			<!-- footer -->
+			<div class="chat-footer">
+				<!-- 图片显示框 -->
+				<div class="paste-image-group">
+					<div id="paste-image-delete-btn"></div>
+					<div id="paste-image"></div>
+				</div>
+				<!-- 按钮们 -->
+				<div class="icon-group">
+					<button id="getNetList">
+						<span class="button-tip">解析网表</span>
+						<img
+							src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxwYXRoIGQ9Ik02LjQ5OSw4Ljk5N2MtMS4zODEtMC4wMDItMi41MDIsMS4xMTUtMi41MDQsMi40OTZjLTAuMDAyLDEuMzgxLDEuMTE2LDIuNTAyLDIuNDk2LDIuNTA0CgljMS4zODEsMC4wMDIsMi41MDItMS4xMTYsMi41MDQtMi40OTZDOC45OTgsMTAuMTIsNy44OCw4Ljk5OSw2LjQ5OSw4Ljk5N3ogTTYuNDkzLDEyLjk5N2MtMC44MjctMC4wMDEtMS40OTktMC42NzUtMS40OTgtMS41MDIKCWMwLjAwMS0wLjgyNywwLjY3NS0xLjQ5OSwxLjUwMi0xLjQ5OGMwLjgyNywwLjAwMSwxLjQ5OSwwLjY3NSwxLjQ5OCwxLjUwMkM3Ljk5NCwxMi4zMjYsNy4zMiwxMi45OTgsNi40OTMsMTIuOTk3eiIvPgo8cGF0aCBkPSJNMTUuNSwxMmgtMS40OTR2LTEuNDk0YzAtMC4yNzYtMC4yMjQtMC41LTAuNS0wLjVzLTAuNSwwLjIyNC0wLjUsMC41VjEyaC0xLjQ5NGMtMC4yNzYsMC0wLjUsMC4yMjQtMC41LDAuNQoJYzAsMC4yNzYsMC4yMjQsMC41LDAuNSwwLjVoMS40OTR2MS40OTRjMCwwLjI3NiwwLjIyNCwwLjUsMC41LDAuNXMwLjUtMC4yMjQsMC41LTAuNVYxM0gxNS41YzAuMjc2LDAsMC41LTAuMjI0LDAuNS0wLjUKCUMxNiwxMi4yMjQsMTUuNzc2LDEyLDE1LjUsMTJ6Ii8+CjxwYXRoIGQ9Ik0xNSwxSDJDMS40NSwxLDEsMS40NSwxLDJ2MTNjMCwwLjU1LDAuNDUsMSwxLDFoNi41QzguNzgsMTYsOSwxNS43OCw5LDE1LjVDOSwxNS4yMiw4Ljc4LDE1LDguNSwxNUgyVjkuNzFMNS43MSw2SDE1djEuNQoJQzE1LDcuNzgsMTUuMjIsOCwxNS41LDhTMTYsNy43OCwxNiw3LjVWMkMxNiwxLjQ1LDE1LjU1LDEsMTUsMXogTTE1LDVINS43QzUuNDQsNSw1LjE4LDUuMTEsNSw1LjI5bC0zLDNWMmgxM1Y1eiIvPgo8L3N2Zz4K"
+							alt="解析网表"
+						/>
+					</button>
+					<button id="addFile">
+						<span class="button-tip">添加文件</span>
+						<img
+							src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxwYXRoIGQ9Ik04LjI5NiwxSDNDMi40NDgsMSwyLDEuNDQ4LDIsMnYxM2MwLDAuNTUyLDAuNDQ4LDEsMSwxaDEwYzAuNTUyLDAsMS0wLjQ0OCwxLTFWNS43MDRjMC0wLjI2NS0wLjEwNS0wLjUyLTAuMjkzLTAuNzA3CgljLTAuMzYyLTAuMjg1LTAuNzI1LTAuNTcxLTEuMDg3LTAuODU2Yy0wLjcwNi0wLjU1Ni0xLjQxMi0xLjExMi0yLjExOC0xLjY2OGMtMC4zNjgtMC4yOS0wLjc0NC0wLjU3MS0xLjExLTAuODY0CglDOS4wNTcsMS4zNDIsOC43NTcsMSw4LjI5NiwxeiBNMTIuMjksNUg5VjIuNzFMMTIuMjksNXogTTMsMTVWMmg1djNjMCwwLjU1MiwwLjQ0OCwxLDEsMWg0djlIM3oiLz4KPHJlY3Qgc3R5bGU9ImZpbGw6bm9uZTsiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIvPgo8cmVjdCBzdHlsZT0iZmlsbDpub25lOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2Ii8+Cjwvc3ZnPgo="
+							alt="添加文件"
+						/>
+					</button>
+					<button id="newChat">
+						<span class="button-tip">新的聊天</span>
+						<img
+							src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjQuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMCIgaWQ9IuWbvuWxgl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMTYgMTYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8cGF0aCBkPSJNMTIuNSwxMi41Yy0wLjIsMC0wLjM4MS0wLjExOS0wLjQ2LTAuMzAzTDkuNSw2LjI3bC0yLjU0LDUuOTI4Yy0wLjE1OCwwLjM2Ny0wLjc2MiwwLjM2Ny0wLjkyLDBMMy41LDYuMjdMMi40Niw4LjY5NwoJCUMyLjM4MSw4Ljg4MSwyLjIwMSw5LDIuMDAxLDlIMC41QzAuMjI0LDksMCw4Ljc3NiwwLDguNXYwQzAsOC4yMjQsMC4yMjQsOCwwLjUsOGgxLjE3bDEuMzctMy4xOTdjMC4xNTgtMC4zNjcsMC43NjItMC4zNjcsMC45MiwwCgkJTDYuNSwxMC43M2wyLjU0LTUuOTI4YzAuMTU4LTAuMzY3LDAuNzYyLTAuMzY3LDAuOTIsMGwyLjU0LDUuOTI4bDEuMDQtMi40MjhDMTMuNjE5LDguMTE5LDEzLjc5OSw4LDEzLjk5OSw4SDE1LjUKCQlDMTUuNzc2LDgsMTYsOC4yMjQsMTYsOC41djBDMTYsOC43NzYsMTUuNzc2LDksMTUuNSw5aC0xLjE3bC0xLjM3LDMuMTk3QzEyLjg4MSwxMi4zODEsMTIuNywxMi41LDEyLjUsMTIuNXoiLz4KPC9nPgo8L3N2Zz4K"
+							alt="新的聊天"
+						/>
+					</button>
+					<button id="model">
+						<span class="button-tip">模型</span>
+						<img
+							src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxyZWN0IHN0eWxlPSJmaWxsOm5vbmU7IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiLz4KPGc+Cgk8cGF0aCBkPSJNMTMuMzksMTEuMzMzYy0wLjAyOC0wLjA1NS0wLjA1Ny0wLjEwOC0wLjA5My0wLjE2Yy0wLjA4NS0wLjEzLTAuMTk1LTAuMjUtMC4zMTgtMC4zNDcKCQljLTAuMTE1LTAuMDkzLTAuMjQzLTAuMTY4LTAuMzgyLTAuMjJjLTAuMTQzLTAuMDU3LTAuMjk4LTAuMDkyLTAuNDYtMC4xYy0wLjAzLTAuMDA1LTAuMDYtMC4wMDUtMC4wOS0wLjAwNXMtMC4wNiwwLTAuMDksMC4wMDUKCQljLTAuMTYyLDAuMDA4LTAuMzE4LDAuMDQyLTAuNDYsMC4xYy0wLjE0LDAuMDUyLTAuMjY3LDAuMTI4LTAuMzgyLDAuMjJjLTAuMTIyLDAuMDk3LTAuMjMzLDAuMjE3LTAuMzE4LDAuMzQ3CgkJYy0wLjAzNSwwLjA1Mi0wLjA2NSwwLjEwNS0wLjA5MywwLjE2Yy0wLjA3LDAuMTM3LTAuMTE3LDAuMjg3LTAuMTQsMC40NDdjLTAuMDEzLDAuMDczLTAuMDE4LDAuMTQ1LTAuMDE4LDAuMjIKCQlzMC4wMDUsMC4xNDgsMC4wMTgsMC4yMmMwLjAyMiwwLjE2LDAuMDcsMC4zMSwwLjE0LDAuNDQ4YzAuMDI4LDAuMDU1LDAuMDU3LDAuMTA3LDAuMDkzLDAuMTZjMC4wODUsMC4xMywwLjE5NSwwLjI1LDAuMzE4LDAuMzQ3CgkJYzAuMTE1LDAuMDkzLDAuMjQzLDAuMTY3LDAuMzgyLDAuMjJjMC4xNDMsMC4wNTcsMC4yOTgsMC4wOTIsMC40NiwwLjFjMC4wMywwLjAwNSwwLjA2LDAuMDA1LDAuMDksMC4wMDVzMC4wNiwwLDAuMDktMC4wMDUKCQljMC4xNjItMC4wMDgsMC4zMTgtMC4wNDIsMC40Ni0wLjFjMC4xNC0wLjA1MywwLjI2Ny0wLjEyOCwwLjM4Mi0wLjIyYzAuMTIyLTAuMDk3LDAuMjMzLTAuMjE3LDAuMzE4LTAuMzQ3CgkJYzAuMDM1LTAuMDUzLDAuMDY1LTAuMTA1LDAuMDkzLTAuMTZjMC4wNy0wLjEzOCwwLjExNy0wLjI4NywwLjE0LTAuNDQ4YzAuMDEzLTAuMDcyLDAuMDE4LTAuMTQ1LDAuMDE4LTAuMjIKCQlzLTAuMDA1LTAuMTQ4LTAuMDE4LTAuMjJDMTMuNTA3LDExLjYyLDEzLjQ2LDExLjQ3LDEzLjM5LDExLjMzM3ogTTEyLjc4NywxMi4xMTZjLTAuMDExLDAuMDc2LTAuMDMzLDAuMTQ3LTAuMDY4LDAuMjE2CgkJYy0wLjAxNCwwLjAyNy0wLjAyOCwwLjA1My0wLjA1LDAuMDg1Yy0wLjA0MSwwLjA2Mi0wLjA5NiwwLjEyMy0wLjE2LDAuMTc0Yy0wLjA1NiwwLjA0NS0wLjExNSwwLjA3OS0wLjE5MywwLjEwOQoJCWMtMC4wNjgsMC4wMjctMC4xNCwwLjA0My0wLjIxNCwwLjA0NmwtMC4wNDUsMC4wMDJsLTAuMDExLDAuMDAybC0wLjAxMS0wLjAwMmwtMC4wNDUtMC4wMDJjLTAuMDc0LTAuMDAzLTAuMTQ2LTAuMDE5LTAuMjMxLTAuMDUzCgkJYy0wLjA2MS0wLjAyMy0wLjEyLTAuMDU3LTAuMTc5LTAuMTA1Yy0wLjA2LTAuMDQ4LTAuMTE2LTAuMTA5LTAuMTYxLTAuMTc3Yy0wLjAxNy0wLjAyNi0wLjAzMi0wLjA1Mi0wLjA0OC0wLjA4NAoJCWMtMC4wMzMtMC4wNjUtMC4wNTUtMC4xMzYtMC4wNjktMC4yMzVDMTEuMywxMi4wNjcsMTEuMjk3LDEyLjAzNiwxMS4yOTcsMTJjMC0wLjAzNywwLjAwMi0wLjA2NywwLjAxLTAuMTE2CgkJYzAuMDExLTAuMDc2LDAuMDMzLTAuMTQ3LDAuMDY4LTAuMjE2YzAuMDE0LTAuMDI3LDAuMDI4LTAuMDUzLDAuMDUtMC4wODVjMC4wNDEtMC4wNjIsMC4wOTYtMC4xMjMsMC4xNi0wLjE3NAoJCWMwLjA1Ni0wLjA0NSwwLjExNS0wLjA3OSwwLjE5My0wLjEwOWMwLjA2OC0wLjAyNywwLjE0LTAuMDQzLDAuMjE0LTAuMDQ2bDAuMDQ1LTAuMDAybDAuMDExLTAuMDAybDAuMDExLDAuMDAybDAuMDQ1LDAuMDAyCgkJYzAuMDc0LDAuMDAzLDAuMTQ2LDAuMDE5LDAuMjMxLDAuMDUzYzAuMDYxLDAuMDIzLDAuMTIsMC4wNTcsMC4xNzksMC4xMDVjMC4wNiwwLjA0OCwwLjExNiwwLjEwOSwwLjE2MSwwLjE3NwoJCWMwLjAxNywwLjAyNiwwLjAzMiwwLjA1MiwwLjA0OCwwLjA4NGMwLjAzMywwLjA2NSwwLjA1NSwwLjEzNiwwLjA2OSwwLjIzNWMwLjAwNCwwLjAyNiwwLjAwNywwLjA1NiwwLjAwNywwLjA5MgoJCUMxMi43OTcsMTIuMDM2LDEyLjc5NSwxMi4wNjcsMTIuNzg3LDEyLjExNnoiLz4KCTxwYXRoIGQ9Ik0xNS44MTIsMTIuNzNsLTAuNTQyLTAuMzEzYzAuMDE3LTAuMTM4LDAuMDI3LTAuMjc1LDAuMDI3LTAuNDE3cy0wLjAxLTAuMjgtMC4wMjctMC40MTdsMC41NDItMC4zMTMKCQljMC4xNzktMC4xMDMsMC4yNDEtMC4zMzMsMC4xMzctMC41MTJsLTAuODc1LTEuNTE2Yy0wLjA2OS0wLjEyLTAuMTk2LTAuMTg4LTAuMzI1LTAuMTg4Yy0wLjA2MywwLTAuMTI4LDAuMDE2LTAuMTg3LDAuMDUKCQlMMTQuMDIsOS40MTdDMTMuOCw5LjI1LDEzLjU1Nyw5LjEwNywxMy4yOTcsOVY4LjM3NUMxMy4yOTcsOC4xNjgsMTMuMTI5LDgsMTIuOTIyLDhoLTEuNzVjLTAuMjA3LDAtMC4zNzUsMC4xNjgtMC4zNzUsMC4zNzVWOQoJCWMtMC4yNiwwLjEwNy0wLjUwMiwwLjI1LTAuNzIzLDAuNDE3TDkuNTMyLDkuMTA1Yy0wLjA1OS0wLjAzNC0wLjEyMy0wLjA1LTAuMTg3LTAuMDVjLTAuMTMsMC0wLjI1NiwwLjA2Ny0wLjMyNSwwLjE4OAoJCWwtMC44NzUsMS41MTZjLTAuMTA0LDAuMTc5LTAuMDQyLDAuNDA5LDAuMTM3LDAuNTEybDAuNTQyLDAuMzEzQzguODA3LDExLjcyLDguNzk3LDExLjg1Nyw4Ljc5NywxMnMwLjAxLDAuMjgsMC4wMjcsMC40MTcKCQlMOC4yODIsMTIuNzNjLTAuMTc5LDAuMTA0LTAuMjQxLDAuMzMzLTAuMTM3LDAuNTEybDAuODc1LDEuNTE2YzAuMDY5LDAuMTIsMC4xOTYsMC4xODgsMC4zMjUsMC4xODgKCQljMC4wNjMsMCwwLjEyOC0wLjAxNiwwLjE4Ny0wLjA1bDAuNTQzLTAuMzEzYzAuMjIsMC4xNjcsMC40NjMsMC4zMSwwLjcyMywwLjQxN3YwLjYyNWMwLDAuMjA3LDAuMTY4LDAuMzc1LDAuMzc1LDAuMzc1aDEuNzUKCQljMC4yMDcsMCwwLjM3NS0wLjE2OCwwLjM3NS0wLjM3NVYxNWMwLjI2LTAuMTA3LDAuNTAyLTAuMjUsMC43MjMtMC40MTdsMC41NDMsMC4zMTNjMC4wNTksMC4wMzQsMC4xMjMsMC4wNSwwLjE4NywwLjA1CgkJYzAuMTMsMCwwLjI1Ni0wLjA2NywwLjMyNS0wLjE4OGwwLjg3NS0xLjUxNkMxNi4wNTMsMTMuMDYzLDE1Ljk5MiwxMi44MzQsMTUuODEyLDEyLjczeiBNMTQuNTI2LDExLjY3NwoJCWMwLjAxNCwwLjExNCwwLjAyMSwwLjIyLDAuMDIxLDAuMzIzcy0wLjAwNywwLjIwOS0wLjAyMSwwLjMyM2wtMC4wNjMsMC40OTVsMC40MzIsMC4yNDlsMC4yMTcsMC4xMjVsLTAuNSwwLjg2NmwtMC4yMTgtMC4xMjYKCQlsLTAuNDMyLTAuMjQ5bC0wLjM5NywwLjMwMmMtMC4xNzUsMC4xMzMtMC4zNjIsMC4yNDEtMC41NTUsMC4zMjFsLTAuNDY0LDAuMTkyVjE1djAuMjVoLTFWMTV2LTAuNTAybC0wLjQ2NC0wLjE5MgoJCWMtMC4xOTMtMC4wOC0wLjM4LTAuMTg4LTAuNTU1LTAuMzIxbC0wLjM5Ny0wLjMwMkw5LjcsMTMuOTMzbC0wLjIxOCwwLjEyNmwtMC41LTAuODY2bDAuMjE3LTAuMTI1bDAuNDMyLTAuMjQ5bC0wLjA2My0wLjQ5NQoJCUM5LjU1NCwxMi4yMDksOS41NDcsMTIuMTAzLDkuNTQ3LDEyczAuMDA3LTAuMjA5LDAuMDIxLTAuMzIzbDAuMDYzLTAuNDk1bC0wLjQzMi0wLjI0OWwtMC4yMTctMC4xMjVsMC41LTAuODY2TDkuNywxMC4wNjcKCQlsMC40MzIsMC4yNDlsMC4zOTctMC4zMDJjMC4xNzUtMC4xMzMsMC4zNjItMC4yNDEsMC41NTUtMC4zMjFsMC40NjQtMC4xOTJWOVY4Ljc1aDFWOXYwLjUwMmwwLjQ2NCwwLjE5MgoJCWMwLjE5MywwLjA4LDAuMzgsMC4xODgsMC41NTUsMC4zMjFsMC4zOTcsMC4zMDJsMC40MzItMC4yNDlsMC4yMTgtMC4xMjZsMC41LDAuODY2bC0wLjIxNywwLjEyNWwtMC40MzIsMC4yNDlMMTQuNTI2LDExLjY3N3oiLz4KCTxwYXRoIGQ9Ik0xMiw2LjVDMTIsNi43NzYsMTIuMjI0LDcsMTIuNSw3UzEzLDYuNzc2LDEzLDYuNXYtM2MwLDAsMC0wLjAwMSwwLTAuMDAxYzAtMC4wODUtMC4wMjYtMC4xNjEtMC4wNjItMC4yMwoJCWMtMC4wNTYtMC4xNjEtMC4xNS0wLjMxLTAuMzI1LTAuMzk1TDYuNzg2LDAuMDY2QzYuNjk2LDAuMDIyLDYuNTk4LDAsNi41LDBTNi4zMDQsMC4wMjIsNi4yMTQsMC4wNjZMMC4zODcsMi44NzQKCQlDMC4xOTUsMi45NjcsMC4wOTksMy4xMzUsMC4wNSwzLjMxNUMwLjAzOCwzLjM0MiwwLjAzNCwzLjM3MiwwLjAyNywzLjQwMUMwLjAyMSwzLjQ0MiwwLjAwNCwzLjQ3OSwwLjAwNSwzLjUyCgkJQzAuMDA1LDMuNTMxLDAsMy41MzksMCwzLjU1djMuNDF2MC43N3Y0LjA4djAuNDg2YzAsMC4zODIsMC4yMTcsMC43MywwLjU2LDAuODk4TDEsMTMuNDFsNS4yMSwyLjUyYzAuMDMsMC4wMiwwLjA2LDAuMDMsMC4wOSwwLjAzCgkJQzYuMzYsMTUuOTksNi40MywxNiw2LjUsMTZzMC4xNC0wLjAxLDAuMi0wLjA0QzYuODgsMTUuODksNywxNS43MSw3LDE1LjV2LTAuNzh2LTQuNDRWOS4xN1Y2LjgzMWw1LTIuNDFWNi41eiBNNiw5djAuODZ2NC44NgoJCUwxLDEyLjNWOC4wOVY3LjNWNC40MjFsNSwyLjQxVjl6IE02LjUsNS45NjJMMS4zOTIsMy41TDYuNSwxLjAzOEwxMS42MDgsMy41TDYuNSw1Ljk2MnoiLz4KPC9nPgo8L3N2Zz4K"
+							alt="设置"
+						/>
+					</button>
+					<button id="setting">
+						<span class="button-tip">设置</span>
+						<img
+							src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHJlY3Qgc3R5bGU9ImZpbGw6bm9uZTsiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIvPgoJPGc+CgkJPHBhdGggZD0iTTkuNSwwaC0zYy0wLjU1LDAtMSwwLjQ1LTEsMXYxYy0wLjUyLDAuMjEtMSwwLjQ5LTEuNDQsMC44M2wtMC44Ny0wLjVDMy4wMywyLjI0LDIuODYsMi4yLDIuNjksMi4yCgkJCWMtMC4zNSwwLTAuNjgsMC4xOC0wLjg3LDAuNWwtMS41LDIuNkMwLjA1LDUuNzgsMC4yMSw2LjM5LDAuNjksNi42N2wwLjg3LDAuNUMxLjUyLDcuNDQsMS41LDcuNzIsMS41LDgKCQkJYzAsMC4yOCwwLjAyLDAuNTYsMC4wNiwwLjgzbC0wLjg3LDAuNWMtMC40OCwwLjI4LTAuNjQsMC44OS0wLjM3LDEuMzdsMS41LDIuNmMwLjE5LDAuMzIsMC41MiwwLjUsMC44NywwLjUKCQkJYzAuMTcsMCwwLjM0LTAuMDQsMC41LTAuMTNsMC44Ny0wLjVDNC41LDEzLjUxLDQuOTgsMTMuNzksNS41LDE0djFjMCwwLjU1LDAuNDUsMSwxLDFoM2MwLjU1LDAsMS0wLjQ1LDEtMXYtMQoJCQljMC41Mi0wLjIxLDEtMC40OSwxLjQ0LTAuODNsMC44NywwLjVjMC4xNiwwLjA5LDAuMzMsMC4xMywwLjUsMC4xM2MwLjM1LDAsMC42OC0wLjE4LDAuODctMC41bDEuNS0yLjYKCQkJYzAuMjctMC40OCwwLjExLTEuMDktMC4zNy0xLjM3bC0wLjg3LTAuNUMxNC40OCw4LjU2LDE0LjUsOC4yOCwxNC41LDhjMC0wLjI4LTAuMDItMC41Ni0wLjA2LTAuODNsMC44Ny0wLjUKCQkJYzAuNDgtMC4yOCwwLjY0LTAuODksMC4zNy0xLjM3bC0xLjUtMi42Yy0wLjE5LTAuMzItMC41Mi0wLjUtMC44Ny0wLjVjLTAuMTcsMC0wLjM0LDAuMDQtMC41LDAuMTNsLTAuODcsMC41CgkJCUMxMS41LDIuNDksMTEuMDIsMi4yMSwxMC41LDJWMUMxMC41LDAuNDUsMTAuMDUsMCw5LjUsMEw5LjUsMHogTTQuMDQ1LDMuODM2YzAuMjIxLDAsMC40NDMtMC4wNzQsMC42MjktMC4yMTIKCQkJQzQuNzg1LDMuNTQxLDQuOTAxLDMuNDYzLDUuMDIsMy4zOWMwLjE1LTAuMTEsMC4zMS0wLjIsMC40OC0wLjI4YzAuMTIyLTAuMDY1LDAuMjQ1LTAuMTIzLDAuMzctMC4xNzcKCQkJQzYuMjQ2LDIuNzcyLDYuNSwyLjQxNSw2LjUsMi4wMDVWMS42OFYxaDN2MC42OHYwLjMyNmMwLDAuNDA5LDAuMjU0LDAuNzY2LDAuNjMsMC45MjdjMC4xMjUsMC4wNTQsMC4yNDgsMC4xMTIsMC4zNywwLjE3NwoJCQljMC4xNywwLjA4LDAuMzMsMC4xNywwLjQ4LDAuMjhjMC4xMiwwLjA3MywwLjIzNSwwLjE1MSwwLjM0NiwwLjIzNGMwLjE4NywwLjEzOSwwLjQwOCwwLjIxMiwwLjYyOSwwLjIxMgoJCQljMC4xNjgsMCwwLjMzNi0wLjA0MiwwLjQ4OS0wLjEzMUwxMi43MywzLjU0bDAuNTgtMC4zNGwxLjUsMi42bC0wLjU4LDAuMzRsLTAuMjg3LDAuMTY2Yy0wLjM1NSwwLjIwNS0wLjUzNywwLjYwNS0wLjQ4OCwxLjAxMwoJCQljMC4wMTYsMC4xMzEsMC4wMjgsMC4yNjUsMC4wMzUsMC40MDFDMTMuNSw3LjgxLDEzLjUsNy45LDEzLjUsOGMwLDAuMSwwLDAuMTktMC4wMSwwLjI4Yy0wLjAwNywwLjEzNi0wLjAxOSwwLjI3LTAuMDM1LDAuNDAxCgkJCWMtMC4wNSwwLjQwOCwwLjEzMiwwLjgwNywwLjQ4OCwxLjAxM0wxNC4yMyw5Ljg2bDAuNTgsMC4zNGwtMS41LDIuNmwtMC41OC0wLjM0bC0wLjI4Ni0wLjE2NQoJCQljLTAuMTUzLTAuMDg4LTAuMzIxLTAuMTMxLTAuNDg5LTAuMTMxYy0wLjIyMSwwLTAuNDQzLDAuMDc0LTAuNjI5LDAuMjEyYy0wLjExMSwwLjA4My0wLjIyNiwwLjE2LTAuMzQ2LDAuMjM0CgkJCWMtMC4xNSwwLjExLTAuMzEsMC4yLTAuNDgsMC4yOGMtMC4xMjIsMC4wNjUtMC4yNDUsMC4xMjMtMC4zNywwLjE3N2MtMC4zNzYsMC4xNjEtMC42MywwLjUxOC0wLjYzLDAuOTI3djAuMzI2VjE1aC0zdi0wLjY4CgkJCXYtMC4zMjZjMC0wLjQwOS0wLjI1NC0wLjc2Ni0wLjYzLTAuOTI3Yy0wLjEyNS0wLjA1NC0wLjI0OC0wLjExMi0wLjM3LTAuMTc3Yy0wLjE3LTAuMDgtMC4zMy0wLjE3LTAuNDgtMC4yOAoJCQljLTAuMTItMC4wNzMtMC4yMzUtMC4xNTEtMC4zNDYtMC4yMzRjLTAuMTg3LTAuMTM5LTAuNDA4LTAuMjEyLTAuNjI5LTAuMjEyYy0wLjE2OCwwLTAuMzM2LDAuMDQyLTAuNDg5LDAuMTMxTDMuMjcsMTIuNDYKCQkJTDIuNjksMTIuOGwtMS41LTIuNmwwLjU4LTAuMzRsMC4yODctMC4xNjZjMC4zNTUtMC4yMDUsMC41MzctMC42MDUsMC40ODgtMS4wMTNDMi41MjksOC41NSwyLjUxNyw4LjQxNiwyLjUxLDguMjgKCQkJQzIuNSw4LjE5LDIuNSw4LjEsMi41LDhjMC0wLjEsMC0wLjE5LDAuMDEtMC4yOGMwLjAwNy0wLjEzNiwwLjAxOS0wLjI3LDAuMDM1LTAuNDAxYzAuMDUtMC40MDgtMC4xMzItMC44MDctMC40ODgtMS4wMTMKCQkJTDEuNzcsNi4xNEwxLjE5LDUuOGwxLjUtMi42bDAuNTgsMC4zNGwwLjI4NiwwLjE2NUMzLjcwOSwzLjc5NCwzLjg3NywzLjgzNiw0LjA0NSwzLjgzNkw0LjA0NSwzLjgzNnoiLz4KCTwvZz4KCTxnPgoJCTxwYXRoIGQ9Ik04LDUuNWMxLjM3OSwwLDIuNSwxLjEyMSwyLjUsMi41UzkuMzc5LDEwLjUsOCwxMC41UzUuNSw5LjM3OSw1LjUsOFM2LjYyMSw1LjUsOCw1LjUgTTgsNC41QzYuMDY3LDQuNSw0LjUsNi4wNjcsNC41LDgKCQkJczEuNTY3LDMuNSwzLjUsMy41czMuNS0xLjU2NywzLjUtMy41UzkuOTMzLDQuNSw4LDQuNUw4LDQuNXoiLz4KCTwvZz4KPC9nPgo8L3N2Zz4K"
+							alt="设置"
+						/>
+					</button>
+					<button id="test" style="display: none">
+						<span class="button-tip">测试</span>
+						<img
+							src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxyZWN0IHN0eWxlPSJmaWxsOm5vbmU7IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiLz4KPHBhdGggZD0iTTE1LjUsMWgtMTRDMS4yMjQsMSwxLDEuMjI0LDEsMS41djJDMSwzLjc3NiwxLjIyNCw0LDEuNSw0UzIsMy43NzYsMiwzLjVWMmg2djEzSDYuNUM2LjIyNCwxNSw2LDE1LjIyNCw2LDE1LjUKCVM2LjIyNCwxNiw2LjUsMTZoNGMwLjI3NiwwLDAuNS0wLjIyNCwwLjUtMC41UzEwLjc3NiwxNSwxMC41LDE1SDlWMmg2djEuNUMxNSwzLjc3NiwxNS4yMjQsNCwxNS41LDRTMTYsMy43NzYsMTYsMy41di0yCglDMTYsMS4yMjQsMTUuNzc2LDEsMTUuNSwxeiIvPgo8L3N2Zz4K"
+							alt="测试"
+						/>
+					</button>
+				</div>
+				<!-- 消息输入框 -->
+				<div class="input-group">
+					<input type="text" class="chat-input" id="chat-input" placeholder="解析网表后可以解决复杂问题" />
+					<button class="send-button" id="send">发送</button>
+				</div>
+			</div>
 		</div>
 
-	</div>
-	<!-- footer -->
-	<div class="chat-footer">
-		<!-- 图片显示框 -->
-		<div class="paste-image-group">
-			<div id="paste-image-delete-btn"></div>
-			<div id="paste-image"></div>
-		</div>
-		<!-- 按钮们 -->
-		<div class="icon-group">
-			<button id="getNetList">
-				<span class="button-tip">解析网表</span>
-				<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxwYXRoIGQ9Ik02LjQ5OSw4Ljk5N2MtMS4zODEtMC4wMDItMi41MDIsMS4xMTUtMi41MDQsMi40OTZjLTAuMDAyLDEuMzgxLDEuMTE2LDIuNTAyLDIuNDk2LDIuNTA0CgljMS4zODEsMC4wMDIsMi41MDItMS4xMTYsMi41MDQtMi40OTZDOC45OTgsMTAuMTIsNy44OCw4Ljk5OSw2LjQ5OSw4Ljk5N3ogTTYuNDkzLDEyLjk5N2MtMC44MjctMC4wMDEtMS40OTktMC42NzUtMS40OTgtMS41MDIKCWMwLjAwMS0wLjgyNywwLjY3NS0xLjQ5OSwxLjUwMi0xLjQ5OGMwLjgyNywwLjAwMSwxLjQ5OSwwLjY3NSwxLjQ5OCwxLjUwMkM3Ljk5NCwxMi4zMjYsNy4zMiwxMi45OTgsNi40OTMsMTIuOTk3eiIvPgo8cGF0aCBkPSJNMTUuNSwxMmgtMS40OTR2LTEuNDk0YzAtMC4yNzYtMC4yMjQtMC41LTAuNS0wLjVzLTAuNSwwLjIyNC0wLjUsMC41VjEyaC0xLjQ5NGMtMC4yNzYsMC0wLjUsMC4yMjQtMC41LDAuNQoJYzAsMC4yNzYsMC4yMjQsMC41LDAuNSwwLjVoMS40OTR2MS40OTRjMCwwLjI3NiwwLjIyNCwwLjUsMC41LDAuNXMwLjUtMC4yMjQsMC41LTAuNVYxM0gxNS41YzAuMjc2LDAsMC41LTAuMjI0LDAuNS0wLjUKCUMxNiwxMi4yMjQsMTUuNzc2LDEyLDE1LjUsMTJ6Ii8+CjxwYXRoIGQ9Ik0xNSwxSDJDMS40NSwxLDEsMS40NSwxLDJ2MTNjMCwwLjU1LDAuNDUsMSwxLDFoNi41QzguNzgsMTYsOSwxNS43OCw5LDE1LjVDOSwxNS4yMiw4Ljc4LDE1LDguNSwxNUgyVjkuNzFMNS43MSw2SDE1djEuNQoJQzE1LDcuNzgsMTUuMjIsOCwxNS41LDhTMTYsNy43OCwxNiw3LjVWMkMxNiwxLjQ1LDE1LjU1LDEsMTUsMXogTTE1LDVINS43QzUuNDQsNSw1LjE4LDUuMTEsNSw1LjI5bC0zLDNWMmgxM1Y1eiIvPgo8L3N2Zz4K" alt="解析网表">
-			</button>
-			<button id="addFile">
-				<span class="button-tip">添加文件</span>
-				<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxwYXRoIGQ9Ik04LjI5NiwxSDNDMi40NDgsMSwyLDEuNDQ4LDIsMnYxM2MwLDAuNTUyLDAuNDQ4LDEsMSwxaDEwYzAuNTUyLDAsMS0wLjQ0OCwxLTFWNS43MDRjMC0wLjI2NS0wLjEwNS0wLjUyLTAuMjkzLTAuNzA3CgljLTAuMzYyLTAuMjg1LTAuNzI1LTAuNTcxLTEuMDg3LTAuODU2Yy0wLjcwNi0wLjU1Ni0xLjQxMi0xLjExMi0yLjExOC0xLjY2OGMtMC4zNjgtMC4yOS0wLjc0NC0wLjU3MS0xLjExLTAuODY0CglDOS4wNTcsMS4zNDIsOC43NTcsMSw4LjI5NiwxeiBNMTIuMjksNUg5VjIuNzFMMTIuMjksNXogTTMsMTVWMmg1djNjMCwwLjU1MiwwLjQ0OCwxLDEsMWg0djlIM3oiLz4KPHJlY3Qgc3R5bGU9ImZpbGw6bm9uZTsiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIvPgo8cmVjdCBzdHlsZT0iZmlsbDpub25lOyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2Ii8+Cjwvc3ZnPgo=" alt="添加文件">
-			</button>
-			<button id="newChat">
-				<span class="button-tip">新的聊天</span>
-				<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI2LjQuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMCIgaWQ9IuWbvuWxgl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMTYgMTYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8cGF0aCBkPSJNMTIuNSwxMi41Yy0wLjIsMC0wLjM4MS0wLjExOS0wLjQ2LTAuMzAzTDkuNSw2LjI3bC0yLjU0LDUuOTI4Yy0wLjE1OCwwLjM2Ny0wLjc2MiwwLjM2Ny0wLjkyLDBMMy41LDYuMjdMMi40Niw4LjY5NwoJCUMyLjM4MSw4Ljg4MSwyLjIwMSw5LDIuMDAxLDlIMC41QzAuMjI0LDksMCw4Ljc3NiwwLDguNXYwQzAsOC4yMjQsMC4yMjQsOCwwLjUsOGgxLjE3bDEuMzctMy4xOTdjMC4xNTgtMC4zNjcsMC43NjItMC4zNjcsMC45MiwwCgkJTDYuNSwxMC43M2wyLjU0LTUuOTI4YzAuMTU4LTAuMzY3LDAuNzYyLTAuMzY3LDAuOTIsMGwyLjU0LDUuOTI4bDEuMDQtMi40MjhDMTMuNjE5LDguMTE5LDEzLjc5OSw4LDEzLjk5OSw4SDE1LjUKCQlDMTUuNzc2LDgsMTYsOC4yMjQsMTYsOC41djBDMTYsOC43NzYsMTUuNzc2LDksMTUuNSw5aC0xLjE3bC0xLjM3LDMuMTk3QzEyLjg4MSwxMi4zODEsMTIuNywxMi41LDEyLjUsMTIuNXoiLz4KPC9nPgo8L3N2Zz4K" alt="新的聊天">
-			</button>
-			<button id="model">
-				<span class="button-tip">模型</span>
-				<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxyZWN0IHN0eWxlPSJmaWxsOm5vbmU7IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiLz4KPGc+Cgk8cGF0aCBkPSJNMTMuMzksMTEuMzMzYy0wLjAyOC0wLjA1NS0wLjA1Ny0wLjEwOC0wLjA5My0wLjE2Yy0wLjA4NS0wLjEzLTAuMTk1LTAuMjUtMC4zMTgtMC4zNDcKCQljLTAuMTE1LTAuMDkzLTAuMjQzLTAuMTY4LTAuMzgyLTAuMjJjLTAuMTQzLTAuMDU3LTAuMjk4LTAuMDkyLTAuNDYtMC4xYy0wLjAzLTAuMDA1LTAuMDYtMC4wMDUtMC4wOS0wLjAwNXMtMC4wNiwwLTAuMDksMC4wMDUKCQljLTAuMTYyLDAuMDA4LTAuMzE4LDAuMDQyLTAuNDYsMC4xYy0wLjE0LDAuMDUyLTAuMjY3LDAuMTI4LTAuMzgyLDAuMjJjLTAuMTIyLDAuMDk3LTAuMjMzLDAuMjE3LTAuMzE4LDAuMzQ3CgkJYy0wLjAzNSwwLjA1Mi0wLjA2NSwwLjEwNS0wLjA5MywwLjE2Yy0wLjA3LDAuMTM3LTAuMTE3LDAuMjg3LTAuMTQsMC40NDdjLTAuMDEzLDAuMDczLTAuMDE4LDAuMTQ1LTAuMDE4LDAuMjIKCQlzMC4wMDUsMC4xNDgsMC4wMTgsMC4yMmMwLjAyMiwwLjE2LDAuMDcsMC4zMSwwLjE0LDAuNDQ4YzAuMDI4LDAuMDU1LDAuMDU3LDAuMTA3LDAuMDkzLDAuMTZjMC4wODUsMC4xMywwLjE5NSwwLjI1LDAuMzE4LDAuMzQ3CgkJYzAuMTE1LDAuMDkzLDAuMjQzLDAuMTY3LDAuMzgyLDAuMjJjMC4xNDMsMC4wNTcsMC4yOTgsMC4wOTIsMC40NiwwLjFjMC4wMywwLjAwNSwwLjA2LDAuMDA1LDAuMDksMC4wMDVzMC4wNiwwLDAuMDktMC4wMDUKCQljMC4xNjItMC4wMDgsMC4zMTgtMC4wNDIsMC40Ni0wLjFjMC4xNC0wLjA1MywwLjI2Ny0wLjEyOCwwLjM4Mi0wLjIyYzAuMTIyLTAuMDk3LDAuMjMzLTAuMjE3LDAuMzE4LTAuMzQ3CgkJYzAuMDM1LTAuMDUzLDAuMDY1LTAuMTA1LDAuMDkzLTAuMTZjMC4wNy0wLjEzOCwwLjExNy0wLjI4NywwLjE0LTAuNDQ4YzAuMDEzLTAuMDcyLDAuMDE4LTAuMTQ1LDAuMDE4LTAuMjIKCQlzLTAuMDA1LTAuMTQ4LTAuMDE4LTAuMjJDMTMuNTA3LDExLjYyLDEzLjQ2LDExLjQ3LDEzLjM5LDExLjMzM3ogTTEyLjc4NywxMi4xMTZjLTAuMDExLDAuMDc2LTAuMDMzLDAuMTQ3LTAuMDY4LDAuMjE2CgkJYy0wLjAxNCwwLjAyNy0wLjAyOCwwLjA1My0wLjA1LDAuMDg1Yy0wLjA0MSwwLjA2Mi0wLjA5NiwwLjEyMy0wLjE2LDAuMTc0Yy0wLjA1NiwwLjA0NS0wLjExNSwwLjA3OS0wLjE5MywwLjEwOQoJCWMtMC4wNjgsMC4wMjctMC4xNCwwLjA0My0wLjIxNCwwLjA0NmwtMC4wNDUsMC4wMDJsLTAuMDExLDAuMDAybC0wLjAxMS0wLjAwMmwtMC4wNDUtMC4wMDJjLTAuMDc0LTAuMDAzLTAuMTQ2LTAuMDE5LTAuMjMxLTAuMDUzCgkJYy0wLjA2MS0wLjAyMy0wLjEyLTAuMDU3LTAuMTc5LTAuMTA1Yy0wLjA2LTAuMDQ4LTAuMTE2LTAuMTA5LTAuMTYxLTAuMTc3Yy0wLjAxNy0wLjAyNi0wLjAzMi0wLjA1Mi0wLjA0OC0wLjA4NAoJCWMtMC4wMzMtMC4wNjUtMC4wNTUtMC4xMzYtMC4wNjktMC4yMzVDMTEuMywxMi4wNjcsMTEuMjk3LDEyLjAzNiwxMS4yOTcsMTJjMC0wLjAzNywwLjAwMi0wLjA2NywwLjAxLTAuMTE2CgkJYzAuMDExLTAuMDc2LDAuMDMzLTAuMTQ3LDAuMDY4LTAuMjE2YzAuMDE0LTAuMDI3LDAuMDI4LTAuMDUzLDAuMDUtMC4wODVjMC4wNDEtMC4wNjIsMC4wOTYtMC4xMjMsMC4xNi0wLjE3NAoJCWMwLjA1Ni0wLjA0NSwwLjExNS0wLjA3OSwwLjE5My0wLjEwOWMwLjA2OC0wLjAyNywwLjE0LTAuMDQzLDAuMjE0LTAuMDQ2bDAuMDQ1LTAuMDAybDAuMDExLTAuMDAybDAuMDExLDAuMDAybDAuMDQ1LDAuMDAyCgkJYzAuMDc0LDAuMDAzLDAuMTQ2LDAuMDE5LDAuMjMxLDAuMDUzYzAuMDYxLDAuMDIzLDAuMTIsMC4wNTcsMC4xNzksMC4xMDVjMC4wNiwwLjA0OCwwLjExNiwwLjEwOSwwLjE2MSwwLjE3NwoJCWMwLjAxNywwLjAyNiwwLjAzMiwwLjA1MiwwLjA0OCwwLjA4NGMwLjAzMywwLjA2NSwwLjA1NSwwLjEzNiwwLjA2OSwwLjIzNWMwLjAwNCwwLjAyNiwwLjAwNywwLjA1NiwwLjAwNywwLjA5MgoJCUMxMi43OTcsMTIuMDM2LDEyLjc5NSwxMi4wNjcsMTIuNzg3LDEyLjExNnoiLz4KCTxwYXRoIGQ9Ik0xNS44MTIsMTIuNzNsLTAuNTQyLTAuMzEzYzAuMDE3LTAuMTM4LDAuMDI3LTAuMjc1LDAuMDI3LTAuNDE3cy0wLjAxLTAuMjgtMC4wMjctMC40MTdsMC41NDItMC4zMTMKCQljMC4xNzktMC4xMDMsMC4yNDEtMC4zMzMsMC4xMzctMC41MTJsLTAuODc1LTEuNTE2Yy0wLjA2OS0wLjEyLTAuMTk2LTAuMTg4LTAuMzI1LTAuMTg4Yy0wLjA2MywwLTAuMTI4LDAuMDE2LTAuMTg3LDAuMDUKCQlMMTQuMDIsOS40MTdDMTMuOCw5LjI1LDEzLjU1Nyw5LjEwNywxMy4yOTcsOVY4LjM3NUMxMy4yOTcsOC4xNjgsMTMuMTI5LDgsMTIuOTIyLDhoLTEuNzVjLTAuMjA3LDAtMC4zNzUsMC4xNjgtMC4zNzUsMC4zNzVWOQoJCWMtMC4yNiwwLjEwNy0wLjUwMiwwLjI1LTAuNzIzLDAuNDE3TDkuNTMyLDkuMTA1Yy0wLjA1OS0wLjAzNC0wLjEyMy0wLjA1LTAuMTg3LTAuMDVjLTAuMTMsMC0wLjI1NiwwLjA2Ny0wLjMyNSwwLjE4OAoJCWwtMC44NzUsMS41MTZjLTAuMTA0LDAuMTc5LTAuMDQyLDAuNDA5LDAuMTM3LDAuNTEybDAuNTQyLDAuMzEzQzguODA3LDExLjcyLDguNzk3LDExLjg1Nyw4Ljc5NywxMnMwLjAxLDAuMjgsMC4wMjcsMC40MTcKCQlMOC4yODIsMTIuNzNjLTAuMTc5LDAuMTA0LTAuMjQxLDAuMzMzLTAuMTM3LDAuNTEybDAuODc1LDEuNTE2YzAuMDY5LDAuMTIsMC4xOTYsMC4xODgsMC4zMjUsMC4xODgKCQljMC4wNjMsMCwwLjEyOC0wLjAxNiwwLjE4Ny0wLjA1bDAuNTQzLTAuMzEzYzAuMjIsMC4xNjcsMC40NjMsMC4zMSwwLjcyMywwLjQxN3YwLjYyNWMwLDAuMjA3LDAuMTY4LDAuMzc1LDAuMzc1LDAuMzc1aDEuNzUKCQljMC4yMDcsMCwwLjM3NS0wLjE2OCwwLjM3NS0wLjM3NVYxNWMwLjI2LTAuMTA3LDAuNTAyLTAuMjUsMC43MjMtMC40MTdsMC41NDMsMC4zMTNjMC4wNTksMC4wMzQsMC4xMjMsMC4wNSwwLjE4NywwLjA1CgkJYzAuMTMsMCwwLjI1Ni0wLjA2NywwLjMyNS0wLjE4OGwwLjg3NS0xLjUxNkMxNi4wNTMsMTMuMDYzLDE1Ljk5MiwxMi44MzQsMTUuODEyLDEyLjczeiBNMTQuNTI2LDExLjY3NwoJCWMwLjAxNCwwLjExNCwwLjAyMSwwLjIyLDAuMDIxLDAuMzIzcy0wLjAwNywwLjIwOS0wLjAyMSwwLjMyM2wtMC4wNjMsMC40OTVsMC40MzIsMC4yNDlsMC4yMTcsMC4xMjVsLTAuNSwwLjg2NmwtMC4yMTgtMC4xMjYKCQlsLTAuNDMyLTAuMjQ5bC0wLjM5NywwLjMwMmMtMC4xNzUsMC4xMzMtMC4zNjIsMC4yNDEtMC41NTUsMC4zMjFsLTAuNDY0LDAuMTkyVjE1djAuMjVoLTFWMTV2LTAuNTAybC0wLjQ2NC0wLjE5MgoJCWMtMC4xOTMtMC4wOC0wLjM4LTAuMTg4LTAuNTU1LTAuMzIxbC0wLjM5Ny0wLjMwMkw5LjcsMTMuOTMzbC0wLjIxOCwwLjEyNmwtMC41LTAuODY2bDAuMjE3LTAuMTI1bDAuNDMyLTAuMjQ5bC0wLjA2My0wLjQ5NQoJCUM5LjU1NCwxMi4yMDksOS41NDcsMTIuMTAzLDkuNTQ3LDEyczAuMDA3LTAuMjA5LDAuMDIxLTAuMzIzbDAuMDYzLTAuNDk1bC0wLjQzMi0wLjI0OWwtMC4yMTctMC4xMjVsMC41LTAuODY2TDkuNywxMC4wNjcKCQlsMC40MzIsMC4yNDlsMC4zOTctMC4zMDJjMC4xNzUtMC4xMzMsMC4zNjItMC4yNDEsMC41NTUtMC4zMjFsMC40NjQtMC4xOTJWOVY4Ljc1aDFWOXYwLjUwMmwwLjQ2NCwwLjE5MgoJCWMwLjE5MywwLjA4LDAuMzgsMC4xODgsMC41NTUsMC4zMjFsMC4zOTcsMC4zMDJsMC40MzItMC4yNDlsMC4yMTgtMC4xMjZsMC41LDAuODY2bC0wLjIxNywwLjEyNWwtMC40MzIsMC4yNDlMMTQuNTI2LDExLjY3N3oiLz4KCTxwYXRoIGQ9Ik0xMiw2LjVDMTIsNi43NzYsMTIuMjI0LDcsMTIuNSw3UzEzLDYuNzc2LDEzLDYuNXYtM2MwLDAsMC0wLjAwMSwwLTAuMDAxYzAtMC4wODUtMC4wMjYtMC4xNjEtMC4wNjItMC4yMwoJCWMtMC4wNTYtMC4xNjEtMC4xNS0wLjMxLTAuMzI1LTAuMzk1TDYuNzg2LDAuMDY2QzYuNjk2LDAuMDIyLDYuNTk4LDAsNi41LDBTNi4zMDQsMC4wMjIsNi4yMTQsMC4wNjZMMC4zODcsMi44NzQKCQlDMC4xOTUsMi45NjcsMC4wOTksMy4xMzUsMC4wNSwzLjMxNUMwLjAzOCwzLjM0MiwwLjAzNCwzLjM3MiwwLjAyNywzLjQwMUMwLjAyMSwzLjQ0MiwwLjAwNCwzLjQ3OSwwLjAwNSwzLjUyCgkJQzAuMDA1LDMuNTMxLDAsMy41MzksMCwzLjU1djMuNDF2MC43N3Y0LjA4djAuNDg2YzAsMC4zODIsMC4yMTcsMC43MywwLjU2LDAuODk4TDEsMTMuNDFsNS4yMSwyLjUyYzAuMDMsMC4wMiwwLjA2LDAuMDMsMC4wOSwwLjAzCgkJQzYuMzYsMTUuOTksNi40MywxNiw2LjUsMTZzMC4xNC0wLjAxLDAuMi0wLjA0QzYuODgsMTUuODksNywxNS43MSw3LDE1LjV2LTAuNzh2LTQuNDRWOS4xN1Y2LjgzMWw1LTIuNDFWNi41eiBNNiw5djAuODZ2NC44NgoJCUwxLDEyLjNWOC4wOVY3LjNWNC40MjFsNSwyLjQxVjl6IE02LjUsNS45NjJMMS4zOTIsMy41TDYuNSwxLjAzOEwxMS42MDgsMy41TDYuNSw1Ljk2MnoiLz4KPC9nPgo8L3N2Zz4K" alt="设置">
-			</button>
-			<button id="setting">
-				<span class="button-tip">设置</span>
-				<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHJlY3Qgc3R5bGU9ImZpbGw6bm9uZTsiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIvPgoJPGc+CgkJPHBhdGggZD0iTTkuNSwwaC0zYy0wLjU1LDAtMSwwLjQ1LTEsMXYxYy0wLjUyLDAuMjEtMSwwLjQ5LTEuNDQsMC44M2wtMC44Ny0wLjVDMy4wMywyLjI0LDIuODYsMi4yLDIuNjksMi4yCgkJCWMtMC4zNSwwLTAuNjgsMC4xOC0wLjg3LDAuNWwtMS41LDIuNkMwLjA1LDUuNzgsMC4yMSw2LjM5LDAuNjksNi42N2wwLjg3LDAuNUMxLjUyLDcuNDQsMS41LDcuNzIsMS41LDgKCQkJYzAsMC4yOCwwLjAyLDAuNTYsMC4wNiwwLjgzbC0wLjg3LDAuNWMtMC40OCwwLjI4LTAuNjQsMC44OS0wLjM3LDEuMzdsMS41LDIuNmMwLjE5LDAuMzIsMC41MiwwLjUsMC44NywwLjUKCQkJYzAuMTcsMCwwLjM0LTAuMDQsMC41LTAuMTNsMC44Ny0wLjVDNC41LDEzLjUxLDQuOTgsMTMuNzksNS41LDE0djFjMCwwLjU1LDAuNDUsMSwxLDFoM2MwLjU1LDAsMS0wLjQ1LDEtMXYtMQoJCQljMC41Mi0wLjIxLDEtMC40OSwxLjQ0LTAuODNsMC44NywwLjVjMC4xNiwwLjA5LDAuMzMsMC4xMywwLjUsMC4xM2MwLjM1LDAsMC42OC0wLjE4LDAuODctMC41bDEuNS0yLjYKCQkJYzAuMjctMC40OCwwLjExLTEuMDktMC4zNy0xLjM3bC0wLjg3LTAuNUMxNC40OCw4LjU2LDE0LjUsOC4yOCwxNC41LDhjMC0wLjI4LTAuMDItMC41Ni0wLjA2LTAuODNsMC44Ny0wLjUKCQkJYzAuNDgtMC4yOCwwLjY0LTAuODksMC4zNy0xLjM3bC0xLjUtMi42Yy0wLjE5LTAuMzItMC41Mi0wLjUtMC44Ny0wLjVjLTAuMTcsMC0wLjM0LDAuMDQtMC41LDAuMTNsLTAuODcsMC41CgkJCUMxMS41LDIuNDksMTEuMDIsMi4yMSwxMC41LDJWMUMxMC41LDAuNDUsMTAuMDUsMCw5LjUsMEw5LjUsMHogTTQuMDQ1LDMuODM2YzAuMjIxLDAsMC40NDMtMC4wNzQsMC42MjktMC4yMTIKCQkJQzQuNzg1LDMuNTQxLDQuOTAxLDMuNDYzLDUuMDIsMy4zOWMwLjE1LTAuMTEsMC4zMS0wLjIsMC40OC0wLjI4YzAuMTIyLTAuMDY1LDAuMjQ1LTAuMTIzLDAuMzctMC4xNzcKCQkJQzYuMjQ2LDIuNzcyLDYuNSwyLjQxNSw2LjUsMi4wMDVWMS42OFYxaDN2MC42OHYwLjMyNmMwLDAuNDA5LDAuMjU0LDAuNzY2LDAuNjMsMC45MjdjMC4xMjUsMC4wNTQsMC4yNDgsMC4xMTIsMC4zNywwLjE3NwoJCQljMC4xNywwLjA4LDAuMzMsMC4xNywwLjQ4LDAuMjhjMC4xMiwwLjA3MywwLjIzNSwwLjE1MSwwLjM0NiwwLjIzNGMwLjE4NywwLjEzOSwwLjQwOCwwLjIxMiwwLjYyOSwwLjIxMgoJCQljMC4xNjgsMCwwLjMzNi0wLjA0MiwwLjQ4OS0wLjEzMUwxMi43MywzLjU0bDAuNTgtMC4zNGwxLjUsMi42bC0wLjU4LDAuMzRsLTAuMjg3LDAuMTY2Yy0wLjM1NSwwLjIwNS0wLjUzNywwLjYwNS0wLjQ4OCwxLjAxMwoJCQljMC4wMTYsMC4xMzEsMC4wMjgsMC4yNjUsMC4wMzUsMC40MDFDMTMuNSw3LjgxLDEzLjUsNy45LDEzLjUsOGMwLDAuMSwwLDAuMTktMC4wMSwwLjI4Yy0wLjAwNywwLjEzNi0wLjAxOSwwLjI3LTAuMDM1LDAuNDAxCgkJCWMtMC4wNSwwLjQwOCwwLjEzMiwwLjgwNywwLjQ4OCwxLjAxM0wxNC4yMyw5Ljg2bDAuNTgsMC4zNGwtMS41LDIuNmwtMC41OC0wLjM0bC0wLjI4Ni0wLjE2NQoJCQljLTAuMTUzLTAuMDg4LTAuMzIxLTAuMTMxLTAuNDg5LTAuMTMxYy0wLjIyMSwwLTAuNDQzLDAuMDc0LTAuNjI5LDAuMjEyYy0wLjExMSwwLjA4My0wLjIyNiwwLjE2LTAuMzQ2LDAuMjM0CgkJCWMtMC4xNSwwLjExLTAuMzEsMC4yLTAuNDgsMC4yOGMtMC4xMjIsMC4wNjUtMC4yNDUsMC4xMjMtMC4zNywwLjE3N2MtMC4zNzYsMC4xNjEtMC42MywwLjUxOC0wLjYzLDAuOTI3djAuMzI2VjE1aC0zdi0wLjY4CgkJCXYtMC4zMjZjMC0wLjQwOS0wLjI1NC0wLjc2Ni0wLjYzLTAuOTI3Yy0wLjEyNS0wLjA1NC0wLjI0OC0wLjExMi0wLjM3LTAuMTc3Yy0wLjE3LTAuMDgtMC4zMy0wLjE3LTAuNDgtMC4yOAoJCQljLTAuMTItMC4wNzMtMC4yMzUtMC4xNTEtMC4zNDYtMC4yMzRjLTAuMTg3LTAuMTM5LTAuNDA4LTAuMjEyLTAuNjI5LTAuMjEyYy0wLjE2OCwwLTAuMzM2LDAuMDQyLTAuNDg5LDAuMTMxTDMuMjcsMTIuNDYKCQkJTDIuNjksMTIuOGwtMS41LTIuNmwwLjU4LTAuMzRsMC4yODctMC4xNjZjMC4zNTUtMC4yMDUsMC41MzctMC42MDUsMC40ODgtMS4wMTNDMi41MjksOC41NSwyLjUxNyw4LjQxNiwyLjUxLDguMjgKCQkJQzIuNSw4LjE5LDIuNSw4LjEsMi41LDhjMC0wLjEsMC0wLjE5LDAuMDEtMC4yOGMwLjAwNy0wLjEzNiwwLjAxOS0wLjI3LDAuMDM1LTAuNDAxYzAuMDUtMC40MDgtMC4xMzItMC44MDctMC40ODgtMS4wMTMKCQkJTDEuNzcsNi4xNEwxLjE5LDUuOGwxLjUtMi42bDAuNTgsMC4zNGwwLjI4NiwwLjE2NUMzLjcwOSwzLjc5NCwzLjg3NywzLjgzNiw0LjA0NSwzLjgzNkw0LjA0NSwzLjgzNnoiLz4KCTwvZz4KCTxnPgoJCTxwYXRoIGQ9Ik04LDUuNWMxLjM3OSwwLDIuNSwxLjEyMSwyLjUsMi41UzkuMzc5LDEwLjUsOCwxMC41UzUuNSw5LjM3OSw1LjUsOFM2LjYyMSw1LjUsOCw1LjUgTTgsNC41QzYuMDY3LDQuNSw0LjUsNi4wNjcsNC41LDgKCQkJczEuNTY3LDMuNSwzLjUsMy41czMuNS0xLjU2NywzLjUtMy41UzkuOTMzLDQuNSw4LDQuNUw4LDQuNXoiLz4KCTwvZz4KPC9nPgo8L3N2Zz4K" alt="设置">
-			</button>
-			<button id="test" style="display: none">
-				<span class="button-tip">测试</span>
-				<img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMjMuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iJiN4NTZGRTsmI3g1QzQyO18xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB3aWR0aD0iMTZweCIgaGVpZ2h0PSIxNnB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDE2IDE2OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxyZWN0IHN0eWxlPSJmaWxsOm5vbmU7IiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiLz4KPHBhdGggZD0iTTE1LjUsMWgtMTRDMS4yMjQsMSwxLDEuMjI0LDEsMS41djJDMSwzLjc3NiwxLjIyNCw0LDEuNSw0UzIsMy43NzYsMiwzLjVWMmg2djEzSDYuNUM2LjIyNCwxNSw2LDE1LjIyNCw2LDE1LjUKCVM2LjIyNCwxNiw2LjUsMTZoNGMwLjI3NiwwLDAuNS0wLjIyNCwwLjUtMC41UzEwLjc3NiwxNSwxMC41LDE1SDlWMmg2djEuNUMxNSwzLjc3NiwxNS4yMjQsNCwxNS41LDRTMTYsMy43NzYsMTYsMy41di0yCglDMTYsMS4yMjQsMTUuNzc2LDEsMTUuNSwxeiIvPgo8L3N2Zz4K" alt="测试">
-			</button>
-		</div>
-		<!-- 消息输入框 -->
-		<div class="input-group">
-			<input type="text" class="chat-input" id="chat-input" placeholder="解析网表后可以解决复杂问题">
-			<button class="send-button" id="send">发送</button>
-		</div>
-	</div>
-</div>
+		<script>
+			// 测试网络连接
+			eda.sys_ClientUrl
+				.request('https://lceda.cn', 'GET')
+				.then((response) => {
+					// ok!!
+				})
+				.catch((error) => {
+					eda.sys_Message.showToastMessage('本拓展需要启用外部交互权限！', 'error');
+				});
+		</script>
 
-<script>
-	// 测试网络连接
-	eda.sys_ClientUrl.request("https://lceda.cn", "GET").then(response => {
-		// ok!!
-	}).catch(error => {
-		eda.sys_Message.showToastMessage("本拓展需要启用外部交互权限！", "error");
-	});
-</script>
+		<script src="/iframe/js/main.js"></script>
 
-<script src="/iframe/js/main.js"></script>
-
-<script>
-	document.getElementById('getNetList').addEventListener('click', function() {
-		getNetlist();
-	});
-
-	document.getElementById('addFile').addEventListener('click', function() {
-		setAIFile();
-	});
-
-	document.getElementById('model').addEventListener('click', function() {
-		openModels();
-	});
-
-	document.getElementById('setting').addEventListener('click', function() {
-		openSettings();
-	});
-
-	document.getElementById('newChat').addEventListener('click', function() {
-		chatHistory = [];
-		let clearChat = document.createElement('div');
-		clearChat.className = 'clear-chat';
-		clearChat.innerHTML = '上下文已清除';
-		document.querySelector('.chat-body').appendChild(clearChat);
-		document.querySelector('.chat-body').scrollTop = document.querySelector('.chat-body').scrollHeight;
-		CHAT_TITLE = "新的聊天";
-		document.getElementById('title').innerText = CHAT_TITLE;
-	});
-
-	document.getElementById('test').addEventListener('click', function() {
-		getDatasheetUrl().then(url => {
-			console.log(url);
-			getDatasheetData(url).then(data => {
-				console.log(data);
+		<script>
+			document.getElementById('getNetList').addEventListener('click', function () {
+				getNetlist();
 			});
-		})
-	});
 
-	document.getElementById('send').addEventListener('click', function() {
-		let input = document.getElementById('chat-input');
-		let showImage = false;
-		let image = null;
-		let message = input.value;
-		if (!message) return;
-		if (MODEL_GROUP === "Gemini") {
-			let parts = [{ text: message }];
-			image = document.getElementById('paste-image').style.backgroundImage;
-			image = image.replace('url("', '').replace('")', '').replace('data:image/png;base64,', '');
-			if(image) {
-				showImage = true;
-				parts.push({ inline_data: { mime_type: "image/png", data: image } });
-				document.getElementById('paste-image').style.backgroundImage = '';
-				document.getElementsByClassName('paste-image-group')[0].style.display = 'none';
-			}
+			document.getElementById('addFile').addEventListener('click', function () {
+				setAIFile();
+			});
 
-			if (FILE_BASE64 !== null) {
-				parts.push({ inline_data: { mime_type: "application/pdf", data: FILE_BASE64 } });
-				FILE_BASE64 = null;
-			}
-			chatHistory.push({ role: 'user', parts: parts });
-		} else if (MODEL_GROUP === "DeepSeek" || (MODEL_GROUP === "QWen" && MODEL_NAME !== "qwen-vl-max-latest")) {
-			chatHistory.push({ role: 'user', content: message });
-		} else if (MODEL_GROUP === "Custom" || (MODEL_GROUP === "QWen" && MODEL_NAME === "qwen-vl-max-latest")) {
-			let contents = [];
-			image = document.getElementById('paste-image').style.backgroundImage;
-			image = image.replace('url("', '').replace('")', '').replace('data:image/png;base64,', '');
-			if(image) {
-				showImage = true;
-				contents.push({ type: "image_url", image_url: { url: "data:image/png;base64," + image } });
-				document.getElementById('paste-image').style.backgroundImage = '';
-				document.getElementsByClassName('paste-image-group')[0].style.display = 'none';
-			}
-			contents.push({ type: "text", text: message });
-			chatHistory.push({ role: 'user', content: contents });
-		}
+			document.getElementById('model').addEventListener('click', function () {
+				openModels();
+			});
 
-		createBubble('user', message + (showImage ? `\n![图片](data:image/png;base64,${image})` : ''), undefined);
-		input.value = '';
-		getAIResponse(chatHistory);
-	});
+			document.getElementById('setting').addEventListener('click', function () {
+				openSettings();
+			});
 
-	document.addEventListener('paste', function (event) {
-		const items = (event.clipboardData || window.clipboardData).items;
-		for (let i = 0; i < items.length; i++) {
-			if (items[i].type.indexOf('image') !== -1) {
-				const blob = items[i].getAsFile();
-				const reader = new FileReader();
-				reader.onload = function (event) {
-					const pasteImage = document.getElementById('paste-image');
-					if (pasteImage) {
-						pasteImage.parentElement.style.display = 'block';
-						pasteImage.style.backgroundImage = `url(${event.target.result})`;
+			document.getElementById('newChat').addEventListener('click', function () {
+				chatHistory = [];
+				let clearChat = document.createElement('div');
+				clearChat.className = 'clear-chat';
+				clearChat.innerHTML = '上下文已清除';
+				document.querySelector('.chat-body').appendChild(clearChat);
+				document.querySelector('.chat-body').scrollTop = document.querySelector('.chat-body').scrollHeight;
+				CHAT_TITLE = '新的聊天';
+				document.getElementById('title').innerText = CHAT_TITLE;
+			});
+
+			document.getElementById('test').addEventListener('click', function () {
+				getDatasheetUrl().then((url) => {
+					console.log(url);
+					getDatasheetData(url).then((data) => {
+						console.log(data);
+					});
+				});
+			});
+
+			document.getElementById('chat-input').addEventListener('keypress', function (event) {
+				if (event.key === 'Enter') {
+					event.preventDefault();
+					document.getElementById('send').click();
+				}
+			});
+
+			document.getElementById('send').addEventListener('click', function () {
+				let input = document.getElementById('chat-input');
+				let showImage = false;
+				let image = null;
+				let message = input.value;
+				if (!message) return;
+				if (MODEL_GROUP === 'Gemini') {
+					let parts = [{ text: message }];
+					image = document.getElementById('paste-image').style.backgroundImage;
+					image = image.replace('url("', '').replace('")', '').replace('data:image/png;base64,', '');
+					if (image) {
+						showImage = true;
+						parts.push({ inline_data: { mime_type: 'image/png', data: image } });
+						document.getElementById('paste-image').style.backgroundImage = '';
+						document.getElementsByClassName('paste-image-group')[0].style.display = 'none';
 					}
-				};
-				reader.readAsDataURL(blob);
-			}
-		}
-	});
 
-	document.getElementById('paste-image-delete-btn').addEventListener('click', function () {
-		const pasteImage = document.getElementById('paste-image');
-		if (pasteImage) {
-			pasteImage.parentElement.style.display = 'none';
-			pasteImage.style.backgroundImage = '';
-		}
-	});
-</script>
+					if (FILE_BASE64 !== null) {
+						parts.push({ inline_data: { mime_type: 'application/pdf', data: FILE_BASE64 } });
+						FILE_BASE64 = null;
+					}
+					chatHistory.push({ role: 'user', parts: parts });
+				} else if (MODEL_GROUP === 'DeepSeek' || (MODEL_GROUP === 'QWen' && MODEL_NAME !== 'qwen-vl-max-latest')) {
+					chatHistory.push({ role: 'user', content: message });
+				} else if (MODEL_GROUP === 'Custom' || (MODEL_GROUP === 'QWen' && MODEL_NAME === 'qwen-vl-max-latest')) {
+					let contents = [];
+					image = document.getElementById('paste-image').style.backgroundImage;
+					image = image.replace('url("', '').replace('")', '').replace('data:image/png;base64,', '');
+					if (image) {
+						showImage = true;
+						contents.push({ type: 'image_url', image_url: { url: 'data:image/png;base64,' + image } });
+						document.getElementById('paste-image').style.backgroundImage = '';
+						document.getElementsByClassName('paste-image-group')[0].style.display = 'none';
+					}
+					contents.push({ type: 'text', text: message });
+					chatHistory.push({ role: 'user', content: contents });
+				}
 
-<script>
-	// 测试用的代码
-	let clickCount = 0;
-	let isTestMode = false;
-	const settingButton = document.getElementById('setting');
-	const testButton = document.getElementById('test');
+				createBubble('user', message + (showImage ? `\n![图片](data:image/png;base64,${image})` : ''), undefined);
+				input.value = '';
+				getAIResponse(chatHistory);
+			});
 
-	settingButton.addEventListener('click', () => {
-		clickCount++;
-		if (isTestMode) {
-			eda.sys_Message.showToastMessage('已经处于测试模式', 'info');
-			return;
-		}
-		if (!isTestMode) {
-			if (clickCount === 5) {
-				eda.sys_Message.showToastMessage('已进入测试模式', 'info');
-				testButton.style.display = 'block';
-				isTestMode = true;
-				clickCount = 0;
-			}
-			if (clickCount === 3) {
-				eda.sys_Message.showToastMessage('再点击2次进入测试模式', 'info');
-			}
-			if (clickCount === 4) {
-				eda.sys_Message.showToastMessage('再点击1次进入测试模式', 'info');
-			}
-			setTimeout(() => {
-				clickCount = 0;
-			}, 4000);
-		}
-	});
-</script>
-</body>
+			document.addEventListener('paste', function (event) {
+				const items = (event.clipboardData || window.clipboardData).items;
+				for (let i = 0; i < items.length; i++) {
+					if (items[i].type.indexOf('image') !== -1) {
+						const blob = items[i].getAsFile();
+						const reader = new FileReader();
+						reader.onload = function (event) {
+							const pasteImage = document.getElementById('paste-image');
+							if (pasteImage) {
+								pasteImage.parentElement.style.display = 'block';
+								pasteImage.style.backgroundImage = `url(${event.target.result})`;
+							}
+						};
+						reader.readAsDataURL(blob);
+					}
+				}
+			});
+
+			document.getElementById('paste-image-delete-btn').addEventListener('click', function () {
+				const pasteImage = document.getElementById('paste-image');
+				if (pasteImage) {
+					pasteImage.parentElement.style.display = 'none';
+					pasteImage.style.backgroundImage = '';
+				}
+			});
+		</script>
+
+		<script>
+			// 测试用的代码
+			let clickCount = 0;
+			let isTestMode = false;
+			const settingButton = document.getElementById('setting');
+			const testButton = document.getElementById('test');
+
+			settingButton.addEventListener('click', () => {
+				clickCount++;
+				if (isTestMode) {
+					eda.sys_Message.showToastMessage('已经处于测试模式', 'info');
+					return;
+				}
+				if (!isTestMode) {
+					if (clickCount === 5) {
+						eda.sys_Message.showToastMessage('已进入测试模式', 'info');
+						testButton.style.display = 'block';
+						isTestMode = true;
+						clickCount = 0;
+					}
+					if (clickCount === 3) {
+						eda.sys_Message.showToastMessage('再点击2次进入测试模式', 'info');
+					}
+					if (clickCount === 4) {
+						eda.sys_Message.showToastMessage('再点击1次进入测试模式', 'info');
+					}
+					setTimeout(() => {
+						clickCount = 0;
+					}, 4000);
+				}
+			});
+		</script>
+	</body>
 </html>
