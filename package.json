@@ -1,10 +1,10 @@
 {
-	"name": "eda-copilot",
+	"name": "pro-api-sdk",
 	"version": "1.1.1",
-	"description": "EDA Copilot",
-	"author": "Mr_Fang <klxf@vip.qq.com>",
-	"license": "GNU GPLv3",
-	"homepage": "https://github.com/klxf/eda-copilot",
+	"description": "嘉立创EDA & EasyEDA 专业版扩展 API 开发工具",
+	"author": "JLCEDA <support@lceda.cn>",
+	"license": "Apache-2.0",
+	"homepage": "https://pro.lceda.cn/",
 	"scripts": {
 		"compile": "rimraf ./dist/ && ts-node ./config/esbuild.prod.ts",
 		"prepare": "husky",
@@ -14,13 +14,13 @@
 		"build": "npm run compile && ts-node ./build/packaged.ts"
 	},
 	"devDependencies": {
-		"@jlceda/pro-api-types": "^0.1.136",
+		"@jlceda/pro-api-types": "^0.1.147",
 		"@microsoft/tsdoc": "^0.15.0",
 		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
 		"@types/fs-extra": "^11.0.4",
 		"@typescript-eslint/eslint-plugin": "^7.18.0",
 		"@typescript-eslint/parser": "^7.18.0",
-		"esbuild": "0.25.0",
+		"esbuild": "^0.24.2",
 		"eslint": "^8.57.0",
 		"eslint-config-alloy": "^5.1.2",
 		"eslint-plugin-tsdoc": "^0.3.0",
@@ -29,7 +29,7 @@
 		"ignore": "^6.0.2",
 		"jszip": "^3.10.1",
 		"lint-staged": "^15.2.10",
-		"prettier": "^3.3.3",
+		"prettier": "^3.4.2",
 		"rimraf": "^6.0.1",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.6.2"
