@@ -8,16 +8,16 @@ async function getAIResponse(contents) {
 	document.querySelector('.chat-body').appendChild(thinking);
 	document.querySelector('.chat-body').scrollTop = document.querySelector('.chat-body').scrollHeight;
 
-	if (MODEL_GROUP === "Gemini") {
+	if (MODEL_GROUP === 'Gemini') {
 		response = await getGeminiResponse(contents);
-	} else if (MODEL_GROUP === "DeepSeek") {
+	} else if (MODEL_GROUP === 'DeepSeek') {
 		response = await getDeepSeekResponse(contents);
-	} else if (MODEL_GROUP === "QWen") {
+	} else if (MODEL_GROUP === 'QWen') {
 		response = await getQWenResponse(contents);
-	} else if (MODEL_GROUP === "Custom") {
+	} else if (MODEL_GROUP === 'Custom') {
 		response = await getCustomResponse(contents);
 	} else {
-		response = { err_code: 1, error: "模型不被支持" };
+		response = { err_code: 1, error: '模型不被支持' };
 	}
 
 	console.log(response);
@@ -28,51 +28,54 @@ async function getAIResponse(contents) {
 		content = content.replace(/\u003cthink\u003e/, '<div class="think">').replace(/\u003c\/think\u003e/, '</div>');
 		createBubble('model', content, undefined);
 
-		if (MODEL_GROUP === "Gemini") {
+		if (MODEL_GROUP === 'Gemini') {
 			chatHistory.push({ role: 'model', parts: [{ text: content }] });
-		} else if (MODEL_GROUP === "DeepSeek" || MODEL_GROUP === "Qwen" || MODEL_GROUP === "Custom") {
+		} else if (MODEL_GROUP === 'DeepSeek' || MODEL_GROUP === 'Qwen' || MODEL_GROUP === 'Custom') {
 			chatHistory.push({ role: 'assistant', content: content });
 		}
 
-		if (CHAT_TITLE === "新的对话") {
+		if (CHAT_TITLE === '新的对话') {
 			let temp = chatHistory.slice();
-			if (MODEL_GROUP === "Gemini") {
-				temp.push({ role: 'user', parts: [{ text: "用几个字总结这个对话，将其作为对话的标题" }] });
+			if (MODEL_GROUP === 'Gemini') {
+				temp.push({ role: 'user', parts: [{ text: '用几个字总结这个对话，将其作为对话的标题' }] });
 
-				getGeminiResponse(temp).then(response => {
+				getGeminiResponse(temp).then((response) => {
 					if (response.err_code === 0) {
 						const summary = response.response;
 						CHAT_TITLE = summary.replace('*', '');
 						document.getElementById('title').innerText = summary;
 					}
 				});
-			} else if (MODEL_GROUP === "DeepSeek") {
-				temp.push({ role: 'user', content: "用几个字总结这个对话，将其作为对话的标题，除此以外不要有任何其他文字" });
+			} else if (MODEL_GROUP === 'DeepSeek') {
+				temp.push({ role: 'user', content: '用几个字总结这个对话，将其作为对话的标题，除此以外不要有任何其他文字' });
 
-				getDeepSeekResponse(temp).then(response => {
+				getDeepSeekResponse(temp).then((response) => {
 					if (response.err_code === 0) {
 						const summary = response.response;
 						CHAT_TITLE = summary.replace(/\u003cthink\u003e.*\u003c\/think\u003e/ms, '').replace('*', '');
 						document.getElementById('title').innerText = CHAT_TITLE;
 					}
 				});
-			} else if (MODEL_GROUP === "QWen") {
-				temp.push({ role: 'user', content: "用几个字总结这个对话，将其作为对话的标题，除此以外不要有任何其他文字" });
+			} else if (MODEL_GROUP === 'QWen') {
+				temp.push({ role: 'user', content: '用几个字总结这个对话，将其作为对话的标题，除此以外不要有任何其他文字' });
 
-				getQWenResponse(temp).then(response => {
+				getQWenResponse(temp).then((response) => {
 					if (response.err_code === 0) {
 						const summary = response.response;
 						CHAT_TITLE = summary.replace(/\u003cthink\u003e.*\u003c\/think\u003e/ms, '').replace('*', '');
 						document.getElementById('title').innerText = CHAT_TITLE;
 					}
 				});
-			} else if (MODEL_GROUP === "Custom") {
-				temp.push({ role: 'user', content: "用几个字总结这个对话，将其作为对话的标题，除此以外不要有任何其他文字" });
+			} else if (MODEL_GROUP === 'Custom') {
+				temp.push({ role: 'user', content: '用几个字总结这个对话，将其作为对话的标题，除此以外不要有任何其他文字' });
 
 				getCustomResponse(temp).then((response) => {
 					if (response.err_code === 0) {
 						const summary = response.response;
-						CHAT_TITLE = summary.replace(/<think>.*<\/think>/ms, '').replaceAll('*', '').replaceAll('\n', '');
+						CHAT_TITLE = summary
+							.replace(/<think>.*<\/think>/ms, '')
+							.replaceAll('*', '')
+							.replaceAll('\n', '');
 						document.getElementById('title').innerText = CHAT_TITLE;
 					}
 				});
@@ -80,78 +83,76 @@ async function getAIResponse(contents) {
 		}
 	} else {
 		document.getElementById('thinking').remove();
-		createBubble('model', response.error, "异常");
+		createBubble('model', response.error, '异常');
 	}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function setAICache(cache) {
-	if (MODEL_GROUP === "Gemini" && MODEL_NAME !== "gemini-2.0-flash-001") {
+	if (MODEL_GROUP === 'Gemini' && MODEL_NAME !== 'gemini-2.0-flash-001') {
 		return await setGeminiCache(cache);
-	} else if (MODEL_GROUP === "QWen" || MODEL_GROUP === "DeepSeek" || MODEL_GROUP === "Custom") {
+	} else if (MODEL_GROUP === 'QWen' || MODEL_GROUP === 'DeepSeek' || MODEL_GROUP === 'Custom') {
 		return await setOtherCache(decodeURIComponent(atob(cache)));
-	} else if (MODEL_GROUP === "Gemini" && MODEL_NAME === "gemini-2.0-flash-001") {
+	} else if (MODEL_GROUP === 'Gemini' && MODEL_NAME === 'gemini-2.0-flash-001') {
 		return await setOtherCache(decodeURIComponent(atob(cache)));
 	} else {
-		createBubble('model', "抱歉，该模型不支持缓存长上下文", "异常");
+		createBubble('model', '抱歉，该模型不支持缓存长上下文', '异常');
 	}
 }
 
 async function getGeminiResponse(contents) {
-	const API = GOOGLE_SETTINGS.HOST + "/v1beta/models/" + MODEL_NAME + ":generateContent?key=" + GOOGLE_SETTINGS.API_KEY;
+	const API = GOOGLE_SETTINGS.HOST + '/v1beta/models/' + MODEL_NAME + ':generateContent?key=' + GOOGLE_SETTINGS.API_KEY;
 	console.log(chatHistory);
 	const data = {
-		contents: [
-			contents
-		],
+		contents: [contents],
 		safetySettings: [
 			[
 				{
-					"category": "HARM_CATEGORY_HARASSMENT",
-					"threshold": "BLOCK_ONLY_HIGH"
+					'category': 'HARM_CATEGORY_HARASSMENT',
+					'threshold': 'BLOCK_ONLY_HIGH',
 				},
 				{
-					"category": "HARM_CATEGORY_HATE_SPEECH",
-					"threshold": "BLOCK_ONLY_HIGH"
+					'category': 'HARM_CATEGORY_HATE_SPEECH',
+					'threshold': 'BLOCK_ONLY_HIGH',
 				},
 				{
-					"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-					"threshold": "BLOCK_ONLY_HIGH"
+					'category': 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+					'threshold': 'BLOCK_ONLY_HIGH',
 				},
 				{
-					"category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-					"threshold": "BLOCK_ONLY_HIGH"
-				}
-			]
-		]
+					'category': 'HARM_CATEGORY_DANGEROUS_CONTENT',
+					'threshold': 'BLOCK_ONLY_HIGH',
+				},
+			],
+		],
 	};
 
 	if (CACHE_NAME !== null) {
 		data.cachedContent = CACHE_NAME;
 	} else {
-		data.systemInstruction = { parts: [{ "text": "You are an electronic engineer. Use Chinese to answer." }] }
+		data.systemInstruction = { parts: [{ 'text': 'You are an electronic engineer. Use Chinese to answer.' }] };
 	}
 
 	try {
-		const response = await eda.sys_ClientUrl.request(API, "POST", JSON.stringify(data), { headers: GOOGLE_SETTINGS.HEADER });
+		const response = await eda.sys_ClientUrl.request(API, 'POST', JSON.stringify(data), { headers: GOOGLE_SETTINGS.HEADER });
 		if (response.status !== 200) {
 			throw new Error(response.statusText);
 		}
 		const result = await response.json();
 		return {
 			response: result.candidates[0].content.parts[0].text,
-			err_code: 0
+			err_code: 0,
 		};
 	} catch (error) {
 		return {
-			error: error.message || "请求失败",
-			err_code: 1
+			error: error.message || '请求失败',
+			err_code: 1,
 		};
 	}
 }
 
 async function getDeepSeekResponse(contents) {
-	const API = DS_SETTINGS.HOST + "/chat/completions";
+	const API = DS_SETTINGS.HOST + '/chat/completions';
 	let HEADERS = DS_SETTINGS.HEADER;
 
 	HEADERS['Authorization'] = 'Bearer ' + DS_SETTINGS.API_KEY;
@@ -159,29 +160,29 @@ async function getDeepSeekResponse(contents) {
 	const data = {
 		model: MODEL_NAME,
 		messages: contents,
-		stream: false
-	}
+		stream: false,
+	};
 
 	try {
-		const response = await eda.sys_ClientUrl.request(API, "POST", JSON.stringify(data), { headers: HEADERS });
+		const response = await eda.sys_ClientUrl.request(API, 'POST', JSON.stringify(data), { headers: HEADERS });
 		if (response.status !== 200) {
 			throw new Error(response.statusText);
 		}
 		const result = await response.json();
 		return {
 			response: result.choices[0].message.content,
-			err_code: 0
+			err_code: 0,
 		};
 	} catch (error) {
 		return {
-			error: error.message || "请求失败",
-			err_code: 1
+			error: error.message || '请求失败',
+			err_code: 1,
 		};
 	}
 }
 
 async function getQWenResponse(contents) {
-	const API = QWEN_SETTINGS.HOST + "/compatible-mode/v1/chat/completions";
+	const API = QWEN_SETTINGS.HOST + '/compatible-mode/v1/chat/completions';
 	let HEADERS = QWEN_SETTINGS.HEADER;
 
 	HEADERS['Authorization'] = 'Bearer ' + QWEN_SETTINGS.API_KEY;
@@ -189,22 +190,22 @@ async function getQWenResponse(contents) {
 	const data = {
 		model: MODEL_NAME,
 		messages: contents,
-	}
+	};
 
 	try {
-		const response = await eda.sys_ClientUrl.request(API, "POST", JSON.stringify(data), { headers: HEADERS });
+		const response = await eda.sys_ClientUrl.request(API, 'POST', JSON.stringify(data), { headers: HEADERS });
 		if (response.status !== 200) {
 			throw new Error(response.statusText);
 		}
 		const result = await response.json();
 		return {
 			response: result.choices[0].message.content,
-			err_code: 0
+			err_code: 0,
 		};
 	} catch (error) {
 		return {
-			error: error.message || "请求失败",
-			err_code: 1
+			error: error.message || '请求失败',
+			err_code: 1,
 		};
 	}
 }
@@ -215,43 +216,49 @@ async function getCustomResponse(contents) {
 	const data = {
 		model: CUSTOM_SETTINGS.MODEL,
 		messages: contents,
-		stream: false
-	}
+		stream: false,
+	};
 
 	try {
-		const response = await eda.sys_ClientUrl.request(API, "POST", JSON.stringify(data), { headers: CUSTOM_SETTINGS.HEADER });
+		const response = await eda.sys_ClientUrl.request(API, 'POST', JSON.stringify(data), { headers: CUSTOM_SETTINGS.HEADER });
 		if (response.status !== 200) {
 			throw new Error(response.statusText);
 		}
 		const result = await response.json();
 		return {
 			response: result.choices[0].message.content,
-			err_code: 0
+			err_code: 0,
 		};
 	} catch (error) {
 		return {
-			error: error.message || "请求失败",
-			err_code: 1
+			error: error.message || '请求失败',
+			err_code: 1,
 		};
 	}
 }
 
 async function setGeminiCache(cache) {
-	let API = GOOGLE_SETTINGS.HOST + "/v1beta/cachedContents?key=" + GOOGLE_SETTINGS.API_KEY;
+	let API = GOOGLE_SETTINGS.HOST + '/v1beta/cachedContents?key=' + GOOGLE_SETTINGS.API_KEY;
 
 	const data = {
-		model: "models/" + MODEL_NAME,
+		model: 'models/' + MODEL_NAME,
 		contents: [
-			{ role: 'user', parts: [{ inline_data: { mime_type: "text/plain", data: cache} }, {text: "Here's a netlist file describing the circuit diagram, and I'm going to ask you questions about it."}] }
+			{
+				role: 'user',
+				parts: [
+					{ inline_data: { mime_type: 'text/plain', data: cache } },
+					{ text: "Here's a netlist file describing the circuit diagram, and I'm going to ask you questions about it." },
+				],
+			},
 		],
 		systemInstruction: {
 			parts: [
 				{
-					"text": "You are an electronic engineer. The text describes a netlist of circuit diagrams. When asked a question about a component, it is displayed if there is a URL in the netlist, otherwise it is not. Use Chinese to answer."
-				}
-			]
+					'text': 'You are an electronic engineer. The text describes a netlist of circuit diagrams. When asked a question about a component, it is displayed if there is a URL in the netlist, otherwise it is not. Use Chinese to answer.',
+				},
+			],
 		},
-	}
+	};
 
 	let thinking = document.createElement('div');
 	thinking.className = 'message-bubble model';
@@ -260,31 +267,35 @@ async function setGeminiCache(cache) {
 	document.querySelector('.chat-body').appendChild(thinking);
 	document.querySelector('.chat-body').scrollTop = document.querySelector('.chat-body').scrollHeight;
 
-	eda.sys_ClientUrl.request(API, "POST", JSON.stringify(data), { headers: GOOGLE_SETTINGS.HEADER }).then(response => {
-		if (response.status !== 200) {
-			throw new Error(response.statusText);
-		}
-		return response.json();
-	}).then(result => {
-		document.getElementById('thinking').remove();
-		createBubble('model', "好的，接下来你可以围绕这张原理图向我提问", undefined);
-		CACHE_NAME = result.name;
-	}).catch(error => {
-		document.getElementById('thinking').remove();
-		createBubble('model', error.toString(), "异常");
-	});
+	eda.sys_ClientUrl
+		.request(API, 'POST', JSON.stringify(data), { headers: GOOGLE_SETTINGS.HEADER })
+		.then((response) => {
+			if (response.status !== 200) {
+				throw new Error(response.statusText);
+			}
+			return response.json();
+		})
+		.then((result) => {
+			document.getElementById('thinking').remove();
+			createBubble('model', '好的，接下来你可以围绕这张原理图向我提问', undefined);
+			CACHE_NAME = result.name;
+		})
+		.catch((error) => {
+			document.getElementById('thinking').remove();
+			createBubble('model', error.toString(), '异常');
+		});
 }
 
 async function setOtherCache(cache) {
 	chatHistory.push({ role: 'user', content: '这是一个电路图的网表，后续回答依照这个网表回答：' + cache });
-	chatHistory.push({ role: 'assistant', content: '好的，我了解了'});
+	chatHistory.push({ role: 'assistant', content: '好的，我了解了' });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getNetlist() {
 	let netlist = '';
-	eda.sch_Netlist.getNetlist().then(data => {
-		netlist = data[0].toString();
+	eda.sch_Netlist.getNetlist().then((data) => {
+		netlist = data.toString();
 		const cache = btoa(encodeURIComponent(netlist));
 		// 获取 cache 的字节数
 		let size = cache.length;
@@ -306,17 +317,17 @@ function getNetlist() {
 </div>`;
 		document.querySelector('.chat-body').appendChild(fileBubble);
 		setAICache(cache);
-	})
-
+	});
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function setAIFile() {
-	if (MODEL_GROUP !== "Gemini") {
+	if (MODEL_GROUP !== 'Gemini') {
 		eda.sys_Message.showToastMessage('当前模型尚未支持该功能', 'warn');
 		return;
 	}
-	const file = await eda.sys_FileSystem.openReadFileDialog("pdf");
+
+	const file = await eda.sys_FileSystem.openReadFileDialog('.pdf');
 	const reader = new FileReader();
 	reader.onload = function (event) {
 		const base64 = event.target.result;
@@ -386,4 +397,3 @@ async function getDatasheetData(url) {
 		return null;
 	}
 }
-

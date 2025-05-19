@@ -3,8 +3,8 @@
 	"uuid": "30c8ce0d81f546fea716ea111c508ab2",
 	"displayName": "EDA Copilot",
 	"description": "嘉立创 EDA 多模态大模型 AI 助手",
-	"version": "1.1.1",
-	"publisher": "Mr_Fang <klxf[#]vip.qq.com>",
+	"version": "1.2.0",
+	"publisher": "Mr_Fang",
 	"engines": {
 		"eda": "^2.2.37"
 	},
@@ -27,24 +27,6 @@
 		"sch": [
 			{
 				"id": "copilot-sch",
-				"title": "Copilot",
-				"menuItems": [
-					{
-						"id": "copilot-iframe",
-						"title": "打开聊天",
-						"registerFn": "openIframe"
-					},
-					{
-						"id": "copilot-about",
-						"title": "关于...",
-						"registerFn": "openAbout"
-					}
-				]
-			}
-		],
-		"pcb": [
-			{
-				"id": "copilot-pcb",
 				"title": "Copilot",
 				"menuItems": [
 					{

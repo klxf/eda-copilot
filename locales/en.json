@@ -1,4 +1,24 @@
 {
-	"About": "About",
-	"EasyEDA extension SDK v": "EasyEDA extension SDK v${1}"
+	"iframe.settings.title": "Settings",
+	"iframe.settings.api_host": "API Host",
+	"iframe.settings.api_key": "API Key",
+	"iframe.settings.header": "Request Header",
+	"iframe.settings.endpoint": "Endpoint",
+	"iframe.settings.model": "Model",
+	"iframe.settings.model.choose": "Choose Model",
+	"iframe.settings.model.custom": "Custom",
+	"iframe.button.cancel": "Cancel",
+	"iframe.button.save": "Save",
+	"iframe.button.analysis_netlist": "Netlist",
+	"iframe.button.add_file": "Add File",
+	"iframe.button.new_chat": "New Chat",
+	"iframe.button.model": "Model",
+	"iframe.button.setting": "Settings",
+	"iframe.button.send": "Send",
+	"iframe.chat.default_title": "New Chat",
+	"iframe.chat.default_message": "Can I help you?",
+	"iframe.chat.default_message_meta": "Prompt",
+	"iframe.chat.context_cleared": "Context Cleared",
+	"iframe.input.chat_input": "Send image, file or netlist can resolve complex issues.",
+	"toast.network_error": "This extension requires enabling the 'External Interactions' permission!"
 }

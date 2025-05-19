@@ -1,4 +1,24 @@
 {
-	"About": "关于",
-	"EasyEDA extension SDK v": "嘉立创EDA 扩展 SDK v${1}"
+	"iframe.settings": "设置",
+	"iframe.settings.api_host": "接口地址",
+	"iframe.settings.api_key": "API Key",
+	"iframe.settings.header": "自定义请求头",
+	"iframe.settings.endpoint": "终结点",
+	"iframe.settings.model": "模型",
+	"iframe.settings.model.choose": "选择模型",
+	"iframe.settings.model.custom": "自定义",
+	"iframe.button.cancel": "取消",
+	"iframe.button.save": "保存",
+	"iframe.button.analysis_netlist": "解析网表",
+	"iframe.button.add_file": "添加文件",
+	"iframe.button.new_chat": "新的聊天",
+	"iframe.button.model": "模型",
+	"iframe.button.setting": "设置",
+	"iframe.button.send": "发送",
+	"iframe.chat.default_title": "新的聊天",
+	"iframe.chat.default_message": "有什么可以帮你的吗？",
+	"iframe.chat.default_message_meta": "预设提示词",
+	"iframe.chat.context_cleared": "上下文已清除",
+	"iframe.input.chat_input": "解析网表、上传图片或文件可解决复杂问题",
+	"toast.network_error": "本拓展需要启用外部交互权限！"
 }

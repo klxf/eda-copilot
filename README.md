@@ -18,10 +18,9 @@
 
 3. 在正式使用前需要先配置模型，点击 `模型` 选择模型，点击 `设置` 进行 API 配置
 
-
 ![image](https://github.com/user-attachments/assets/82c2d88b-683a-4bad-ab85-616c8114aa57)
 
-## 统计信息
+## 星星历史
 
 [![Stargazers over time](https://starchart.cc/klxf/eda-copilot.svg?background=%23ffffff00&axis=%23ffffff&line=%23007bff)](https://starchart.cc/klxf/eda-copilot)
 
@@ -30,3 +29,5 @@
 <a href="https://choosealicense.com/licenses/apache-2.0/" style="vertical-align: inherit;" target="_blank"><img src="https://img.shields.io/github/license/easyeda/pro-api-sdk" alt="GitHub License" class="not-medium-zoom-image" style="display: inline; vertical-align: inherit;" /></a>
 
 本项目使用 [Apache License 2.0](https://choosealicense.com/licenses/apache-2.0/) 开源许可协议
+
+本项目使用了 [Marked](https://github.com/markedjs/marked) 渲染对话
